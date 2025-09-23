@@ -1,0 +1,21 @@
+{
+	"name": "filmecbackend",
+	"version": "1.0.0",
+	"description": "",
+	"main": "main.js",
+	"scripts": {
+		"start": "node root/main.js",
+		"dev": "node root/main.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "commonjs",
+	"devDependencies": {
+		"prettier": "^3.6.2"
+	},
+	"dependencies": {
+		"dotenv": "^17.2.2",
+		"express": "^5.1.0"
+	}
+}
