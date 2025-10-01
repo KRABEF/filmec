@@ -1,3 +1,4 @@
 export const Footer = () => {
     return <h1>Bye, World!</h1>
+    return <h1>Bye, World!</h1>
 }
