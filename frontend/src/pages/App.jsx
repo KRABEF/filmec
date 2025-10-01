@@ -1,21 +1,15 @@
-import { Footer } from "../components/footer";
-import { Header } from "../components/header";
+import { Footer } from '../components/footer';
+import { Header } from '../components/header';
 
 export default function App() {
-  // return <h1 className="text-amber-700">Hello world!</h1>;
-  return <div>
-    <Header>
-
-    </Header>
-    
-    <main>
+	return (
+		<div className="flex flex-col min-h-screen">
+			<Header />
       
-    </main>
+			<main className="flex-grow">
 
-    <Footer>
-
-    </Footer>
-  </div>
+      </main>
+			<Footer />
+		</div>
+	);
 }
-
-
