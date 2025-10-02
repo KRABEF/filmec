@@ -1,14 +1,14 @@
 import { ContainerMain } from '../components/containerMain';
 import { Header } from '../components/header';
+import { LeftMenu } from '../components/leftMenu';
 
 export default function App() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex flex-grow">
-        <div className="w-90 sticky top-0 bg-neutral-900 p-4">Левое меню
-          <leftMenu>Меню</leftMenu>
-			<Button>Отправить</Button>
+        <div className="w-90 sticky top-0 bg-neutral-900 p-4">
+          <LeftMenu></LeftMenu>
 		</div>
         <div className="flex-grow overflow-auto p-4 h-[calc(100vh-100px)]">
           <ContainerMain
