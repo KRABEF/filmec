@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 export const ContainerMain = ({ movies }) => {
+	const navigate = useNavigate();
 	return (
 		<div className="max-w-full mx-auto lg:max-w-4/5 py-5 grid gap-5 grid-cols-1 lg:grid-cols-3 xl:grid-cols-4">
 			{movies.map((movie) => (
@@ -6,7 +9,7 @@ export const ContainerMain = ({ movies }) => {
 					key={movie.id}
 					className="flex flex-col bg-neutral-900 rounded-xl shadow-xl hover:shadow-orange-500/10 transition-all duration-300 p-3 group"
 				>
-					<div className="relative mb-3">
+					<div className="relative mb-3" onClick={() => navigate(`/movie/${movie.id}`)}>
 						<img
 							src={movie.poster}
 							alt={movie.name}
@@ -21,9 +24,11 @@ export const ContainerMain = ({ movies }) => {
 						</div>
 					</div>
 
-					<h2 className="text-lg font-bold text-white group-hover:text-orange-400 transition-colors duration-300 line-clamp-2">
-						{movie.name}
-					</h2>
+					<div className="cursor-pointer" onClick={() => navigate(`/movie/${movie.id}`)}>
+						<h2 className="text-lg font-bold text-white group-hover:text-orange-400 transition-colors duration-300 line-clamp-2">
+							{movie.name}
+						</h2>
+					</div>
 
 					<div className="flex justify-between items-center">
 						<p className="text-neutral-400 text-sm">
