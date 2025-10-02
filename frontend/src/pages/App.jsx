@@ -17,7 +17,7 @@ export default function App() {
 								genres: ['комедия', 'ужастик'],
 								duration_movie: '2 мин.',
 								rating: 5.3,
-								ageLimit: '18+',
+								ageLimit: '0+',
 								poster: '/25630addd03346e5b2fccdeb32bf.jpg',
 							},
 							{
