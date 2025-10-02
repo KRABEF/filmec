@@ -1,13 +1,13 @@
 import { ContainerMain } from '../components/containerMain';
-import { Header } from '../components/header';
 
 export default function App() {
+
 	return (
 		<div className="flex flex-col min-h-screen">
-			<Header />
 			<main className="flex flex-grow">
-				<div className="w-90 sticky top-0 bg-neutral-900 p-4">Левое меню</div>
-				<div className="flex-grow overflow-auto p-4 h-[calc(100vh-100px)]">
+				<div className="w-90 sticky top-0 bg-neutral-900 p-4">Левое меню
+				</div>
+				<div className="flex-grow overflow-auto p-4 h-[calc(100vh-120px)]">
 					<ContainerMain
 						movies={[
 							{
@@ -17,7 +17,7 @@ export default function App() {
 								genres: ['комедия', 'ужастик'],
 								duration_movie: '2 мин.',
 								rating: 5.3,
-								ageLimit: '0+',
+								ageLimit: '18+',
 								poster: '/25630addd03346e5b2fccdeb32bf.jpg',
 							},
 							{

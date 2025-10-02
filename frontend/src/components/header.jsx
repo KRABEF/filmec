@@ -19,7 +19,7 @@ export const Header = () => {
 	return (
 		<div className="p-2 bg-neutral-900 shadow-xl">
 			<div className="flex justify-between items-center m-auto container">
-				<div>
+				<div onClick={() => navigate('/')}>
 					<img className="w-20" src="/logo.svg"></img>
 				</div>
 
