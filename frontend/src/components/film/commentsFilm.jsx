@@ -11,12 +11,36 @@ export const CommentsFilm = () => {
         <Avatar />
         <TextArea placeholder="Оставьте свои честные комментарии здесь." />
       </div>
+      <CommentsList />
+
     </div>
   );
 };
 
-const CommentCloud = () => {};
+const CommentCloud = () => {
+  return (
+    <div className="flex items-end gap-2">
+      <Avatar />
 
-const CommentsList = () => {};
+      <div className="">
+        <div className="flex justify-between items-center gap-3 mb-1">
+          <p className='text-orange-500'>ivan@email.ru</p>
+          <p className='text-sm text-neutral-400'>24.08.2004</p>
+        </div>
+        <div className="bg-neutral-700 text-neutral-200 px-3 py-2 rounded-lg rounded-bl-none">
+          <p>Комментраий</p>
+        </div>
+      </div>
+    </div>
+  )
+};
 
-const FeedbackUser = () => {};
+const CommentsList = () => {
+  return (
+    <div className="flex flex-col gap-3">
+      <CommentCloud />
+      <CommentCloud />
+    </div>
+  )
+};
+
