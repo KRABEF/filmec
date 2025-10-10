@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict wpYuflFabK0Gkr7qb1kgfDprhhYKUo2YnaIDGAjDvvMdbfO57hEQa1wRxjAbAcL
+\restrict 1U71FKpCF5HIfk3RZXbMK60NmtSBbQ1tvtSvplF7BOQIdM9GY8FbYftSALKZtm5
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -19,44 +19,254 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: filmec; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE filmec WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'Russian_Russia.1251';
+
+
+ALTER DATABASE filmec OWNER TO postgres;
+
+\unrestrict 1U71FKpCF5HIfk3RZXbMK60NmtSBbQ1tvtSvplF7BOQIdM9GY8FbYftSALKZtm5
+\connect filmec
+\restrict 1U71FKpCF5HIfk3RZXbMK60NmtSBbQ1tvtSvplF7BOQIdM9GY8FbYftSALKZtm5
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: add_movie_to_favourites(integer, integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.add_movie_to_favourites(user_id integer, movie_id integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    INSERT INTO favourites (id_user, id_movie, date_added)
+    VALUES (user_id, movie_id, CURRENT_DATE);
+END;
+$$;
+
+
+ALTER FUNCTION public.add_movie_to_favourites(user_id integer, movie_id integer) OWNER TO postgres;
+
+--
+-- Name: add_movie_to_watch_later(integer, integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.add_movie_to_watch_later(user_id integer, movie_id integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    INSERT INTO watch_later (id_user, id_movie, date_added)
+    VALUES (user_id, movie_id, CURRENT_DATE);
+END;
+$$;
+
+
+ALTER FUNCTION public.add_movie_to_watch_later(user_id integer, movie_id integer) OWNER TO postgres;
+
+--
+-- Name: get_actors_by_movie(integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_actors_by_movie(var_movie integer) RETURNS TABLE(name text, surname text, photo text)
+    LANGUAGE plpgsql
+    AS $$ BEGIN RETURN QUERY SELECT a.name,a.surname,a.photo FROM casting AS c LEFT JOIN actor AS a ON c.id_actor=a.id WHERE c.id_movie=var_movie ORDER BY surname,name; END; $$;
+
+
+ALTER FUNCTION public.get_actors_by_movie(var_movie integer) OWNER TO postgres;
+
+--
+-- Name: get_movies_alphabetically(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_movies_alphabetically() RETURNS TABLE(movie_name text, movie_release_date date, movie_cover text, movie_description text)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        m.name AS movie_name,
+        m.release_date AS movie_release_date,
+        m.cover AS movie_cover,
+        m.description AS movie_description
+    FROM movie m
+    ORDER BY m.name;
+END;
+$$;
+
+
+ALTER FUNCTION public.get_movies_alphabetically() OWNER TO postgres;
+
+--
+-- Name: get_movies_by_directors(integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_movies_by_directors(var_director integer) RETURNS TABLE(movie_name text, movie_release_date date, movie_cover text, movie_description text, director_name text, director_surname text)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        m.name AS movie_name,
+        m.release_date,
+        m.cover,
+        m.description,
+        d.name AS director_name,
+        d.surname AS director_surname
+    FROM
+        director_movie dm
+    LEFT JOIN
+        director d ON dm.id_director = d.id
+	LEFT JOIN
+		movie m ON dm.id_movie = m.id
+	WHERE dm.id_director = var_director;
+END;
+$$;
+
+
+ALTER FUNCTION public.get_movies_by_directors(var_director integer) OWNER TO postgres;
+
+--
+-- Name: get_movies_by_genres(integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_movies_by_genres(var_geners integer) RETURNS TABLE(movie_name text, movie_release_date date, movie_cover text, movie_description text, genres text)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        m.name AS movie_name,
+        m.release_date AS movie_release_date,
+        m.cover AS movie_cover,
+        m.description AS movie_description,
+        g.genres AS genres
+    FROM
+        movies_genres mg
+    LEFT JOIN
+        genre g ON mg.id_genres  = g.id
+    LEFT JOIN
+		movie m ON mg.id_movies = m.id
+    WHERE mg.id_genres  = var_geners;
+END;
+$$;
+
+
+ALTER FUNCTION public.get_movies_by_genres(var_geners integer) OWNER TO postgres;
+
+--
+-- Name: get_movies_info(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_movies_info() RETURNS TABLE(movie_name text, cover text, description text, duration_movie time without time zone, release_date date, country text, director_name text, director_surname text, rating text, tutor_name text, genres text)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        m.name AS movie_name, 
+        m.cover, 
+        m.description, 
+        m.duration_movie, 
+        m.release_date, 
+        c.country, 
+        d.name AS director_name, 
+        d.surname AS director_surname, 
+        ar.rating, 
+        ft.name AS tutor_name,
+        g.genres
+    FROM movie m 
+    LEFT JOIN age_rating ar ON m.id_age_rating = ar.id 
+    LEFT JOIN movie_country mc ON m.id = mc.id_movie 
+    LEFT JOIN countries c ON mc.id_country = c.id 
+    LEFT JOIN director_movie dm ON m.id = dm.id_movie 
+    LEFT JOIN director d ON dm.id_director = d.id 
+    LEFT JOIN movies_genres mg ON m.id = mg.id_movies 
+    LEFT JOIN genre g ON mg.id_genres = g.id
+    LEFT JOIN film_tutor_countries_movie ftcm ON m.id = ftcm.id_movie 
+    LEFT JOIN film_tutor ft ON ftcm.id_film_tutor = ft.id ORDER BY m.name; 
+END;
+$$;
+
+
+ALTER FUNCTION public.get_movies_info() OWNER TO postgres;
+
+--
+-- Name: get_movies_with_actor(integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_movies_with_actor(var_actor integer) RETURNS TABLE(movie_name text, movie_release_date date, movie_cover text, movie_description text, actor_name text, actor_surname text)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        m.name AS movie_name,
+        m.release_date AS movie_release_date,
+        m.cover AS movie_cover,
+        m.description AS movie_description,
+        a.name AS actor_name,
+        a.surname AS actor_surname
+    FROM
+        casting c
+    LEFT JOIN
+        actor a ON c.id_actor = a.id
+    LEFT JOIN
+		movie m ON c.id_movie = m.id
+    WHERE c.id_actor = var_actor;
+END;
+$$;
+
+
+ALTER FUNCTION public.get_movies_with_actor(var_actor integer) OWNER TO postgres;
+
+--
+-- Name: remove_movie_from_favourites(integer, integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.remove_movie_from_favourites(user_id integer, movie_id integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    DELETE FROM favourites
+    WHERE id_user = user_id AND id_movie = movie_id;
+END;
+$$;
+
+
+ALTER FUNCTION public.remove_movie_from_favourites(user_id integer, movie_id integer) OWNER TO postgres;
+
+--
+-- Name: remove_movie_from_watch_later(integer, integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.remove_movie_from_watch_later(user_id integer, movie_id integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    DELETE FROM watch_later
+    WHERE id_user = user_id AND id_movie = movie_id;
+END;
+$$;
+
+
+ALTER FUNCTION public.remove_movie_from_watch_later(user_id integer, movie_id integer) OWNER TO postgres;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
-
---
--- Name: Cast; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public."Cast" (
-    id integer NOT NULL,
-    id_movie integer NOT NULL,
-    id_actor integer NOT NULL
-);
-
-
-ALTER TABLE public."Cast" OWNER TO postgres;
-
---
--- Name: Cast_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public."Cast_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public."Cast_id_seq" OWNER TO postgres;
-
---
--- Name: Cast_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public."Cast_id_seq" OWNED BY public."Cast".id;
-
 
 --
 -- Name: actor; Type: TABLE; Schema: public; Owner: postgres
@@ -126,6 +336,41 @@ ALTER SEQUENCE public.age_rating_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE public.age_rating_id_seq OWNED BY public.age_rating.id;
+
+
+--
+-- Name: casting; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.casting (
+    id integer NOT NULL,
+    id_movie integer NOT NULL,
+    id_actor integer NOT NULL
+);
+
+
+ALTER TABLE public.casting OWNER TO postgres;
+
+--
+-- Name: cast_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.cast_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.cast_id_seq OWNER TO postgres;
+
+--
+-- Name: cast_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.cast_id_seq OWNED BY public.casting.id;
 
 
 --
@@ -324,7 +569,7 @@ ALTER TABLE public.film_tutor OWNER TO postgres;
 --
 
 CREATE TABLE public.film_tutor_countries_movie (
-    "Id_film_tutor" integer,
+    id_film_tutor integer,
     id_country integer NOT NULL,
     id_movie integer NOT NULL,
     id integer NOT NULL
@@ -521,10 +766,10 @@ ALTER SEQUENCE public.movies_genres_id_seq OWNED BY public.movies_genres.id;
 
 
 --
--- Name: user; Type: TABLE; Schema: public; Owner: postgres
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."user" (
+CREATE TABLE public.users (
     id integer NOT NULL,
     login text,
     email text,
@@ -534,7 +779,7 @@ CREATE TABLE public."user" (
 );
 
 
-ALTER TABLE public."user" OWNER TO postgres;
+ALTER TABLE public.users OWNER TO postgres;
 
 --
 -- Name: user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -555,7 +800,7 @@ ALTER SEQUENCE public.user_id_seq OWNER TO postgres;
 -- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.user_id_seq OWNED BY public."user".id;
+ALTER SEQUENCE public.user_id_seq OWNED BY public.users.id;
 
 
 --
@@ -595,13 +840,6 @@ ALTER SEQUENCE public.watch_later_id_seq OWNED BY public.watch_later.id;
 
 
 --
--- Name: Cast id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Cast" ALTER COLUMN id SET DEFAULT nextval('public."Cast_id_seq"'::regclass);
-
-
---
 -- Name: actor id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -613,6 +851,13 @@ ALTER TABLE ONLY public.actor ALTER COLUMN id SET DEFAULT nextval('public.actor_
 --
 
 ALTER TABLE ONLY public.age_rating ALTER COLUMN id SET DEFAULT nextval('public.age_rating_id_seq'::regclass);
+
+
+--
+-- Name: casting id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.casting ALTER COLUMN id SET DEFAULT nextval('public.cast_id_seq'::regclass);
 
 
 --
@@ -693,10 +938,10 @@ ALTER TABLE ONLY public.movies_genres ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- Name: user id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_id_seq'::regclass);
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.user_id_seq'::regclass);
 
 
 --
@@ -704,133 +949,6 @@ ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_
 --
 
 ALTER TABLE ONLY public.watch_later ALTER COLUMN id SET DEFAULT nextval('public.watch_later_id_seq'::regclass);
-
-
---
--- Data for Name: Cast; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."Cast" (id, id_movie, id_actor) FROM stdin;
-46	4	45
-47	4	46
-48	4	47
-49	4	48
-50	4	49
-51	4	50
-52	4	51
-53	4	52
-54	4	53
-55	4	54
-56	4	55
-57	4	56
-58	4	57
-59	4	58
-60	4	59
-61	4	60
-62	4	61
-63	4	62
-64	4	63
-65	4	64
-66	4	65
-67	4	66
-68	4	67
-69	4	68
-70	4	69
-71	4	70
-72	4	71
-73	4	72
-74	4	73
-76	4	74
-77	4	75
-78	4	76
-79	4	77
-80	4	78
-81	4	79
-1	5	1
-2	5	2
-3	5	3
-4	5	4
-5	5	5
-6	5	6
-7	5	7
-8	5	8
-9	5	9
-10	5	10
-11	5	11
-12	5	12
-13	5	13
-14	5	14
-15	5	15
-16	5	16
-17	5	17
-18	5	18
-19	5	19
-20	5	20
-21	5	21
-22	5	22
-23	5	23
-24	5	24
-25	5	25
-26	5	26
-27	5	27
-28	5	28
-29	5	29
-30	5	30
-31	5	31
-32	5	32
-33	5	33
-34	5	34
-35	5	35
-36	5	36
-37	5	37
-38	5	38
-39	5	39
-40	5	40
-41	5	41
-42	5	42
-43	5	43
-44	5	44
-82	4	80
-83	4	81
-84	3	82
-85	3	83
-86	3	84
-87	3	85
-88	3	86
-89	3	87
-90	3	88
-91	3	89
-92	3	90
-93	3	91
-94	3	92
-95	3	93
-96	3	94
-97	3	95
-98	3	96
-99	3	97
-100	3	98
-101	3	99
-102	3	100
-103	3	101
-104	3	102
-105	3	103
-106	3	104
-107	3	105
-108	3	106
-109	3	107
-110	3	108
-111	3	109
-112	3	110
-113	3	111
-114	3	112
-115	3	113
-116	3	114
-117	3	115
-118	3	116
-119	3	117
-120	3	118
-121	3	119
-\.
 
 
 --
@@ -970,6 +1088,133 @@ COPY public.age_rating (id, rating) FROM stdin;
 3	12+
 4	16+
 5	18+
+\.
+
+
+--
+-- Data for Name: casting; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.casting (id, id_movie, id_actor) FROM stdin;
+46	4	45
+47	4	46
+48	4	47
+49	4	48
+50	4	49
+51	4	50
+52	4	51
+53	4	52
+54	4	53
+55	4	54
+56	4	55
+57	4	56
+58	4	57
+59	4	58
+60	4	59
+61	4	60
+62	4	61
+63	4	62
+64	4	63
+65	4	64
+66	4	65
+67	4	66
+68	4	67
+69	4	68
+70	4	69
+71	4	70
+72	4	71
+73	4	72
+74	4	73
+76	4	74
+77	4	75
+78	4	76
+79	4	77
+80	4	78
+81	4	79
+1	5	1
+2	5	2
+3	5	3
+4	5	4
+5	5	5
+6	5	6
+7	5	7
+8	5	8
+9	5	9
+10	5	10
+11	5	11
+12	5	12
+13	5	13
+14	5	14
+15	5	15
+16	5	16
+17	5	17
+18	5	18
+19	5	19
+20	5	20
+21	5	21
+22	5	22
+23	5	23
+24	5	24
+25	5	25
+26	5	26
+27	5	27
+28	5	28
+29	5	29
+30	5	30
+31	5	31
+32	5	32
+33	5	33
+34	5	34
+35	5	35
+36	5	36
+37	5	37
+38	5	38
+39	5	39
+40	5	40
+41	5	41
+42	5	42
+43	5	43
+44	5	44
+82	4	80
+83	4	81
+84	3	82
+85	3	83
+86	3	84
+87	3	85
+88	3	86
+89	3	87
+90	3	88
+91	3	89
+92	3	90
+93	3	91
+94	3	92
+95	3	93
+96	3	94
+97	3	95
+98	3	96
+99	3	97
+100	3	98
+101	3	99
+102	3	100
+103	3	101
+104	3	102
+105	3	103
+106	3	104
+107	3	105
+108	3	106
+109	3	107
+110	3	108
+111	3	109
+112	3	110
+113	3	111
+114	3	112
+115	3	113
+116	3	114
+117	3	115
+118	3	116
+119	3	117
+120	3	118
+121	3	119
 \.
 
 
@@ -1231,7 +1476,7 @@ COPY public.film_tutor (id, name) FROM stdin;
 -- Data for Name: film_tutor_countries_movie; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.film_tutor_countries_movie ("Id_film_tutor", id_country, id_movie, id) FROM stdin;
+COPY public.film_tutor_countries_movie (id_film_tutor, id_country, id_movie, id) FROM stdin;
 1	186	3	1
 2	60	4	2
 1	186	5	3
@@ -1305,10 +1550,10 @@ COPY public.movies_genres (id, id_movies, id_genres) FROM stdin;
 
 
 --
--- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."user" (id, login, email, password, registration_date, photo) FROM stdin;
+COPY public.users (id, login, email, password, registration_date, photo) FROM stdin;
 1	Hih123	hih@gmail.com	123456	2025-09-30	\N
 \.
 
@@ -1323,13 +1568,6 @@ COPY public.watch_later (id, id_movie, id_user, date_added) FROM stdin;
 
 
 --
--- Name: Cast_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public."Cast_id_seq"', 121, true);
-
-
---
 -- Name: actor_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -1341,6 +1579,13 @@ SELECT pg_catalog.setval('public.actor_id_seq', 114, true);
 --
 
 SELECT pg_catalog.setval('public.age_rating_id_seq', 5, true);
+
+
+--
+-- Name: cast_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.cast_id_seq', 121, true);
 
 
 --
@@ -1375,7 +1620,7 @@ SELECT pg_catalog.setval('public.director_id_seq', 4, true);
 -- Name: favourites_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.favourites_id_seq', 1, true);
+SELECT pg_catalog.setval('public.favourites_id_seq', 5, true);
 
 
 --
@@ -1431,7 +1676,7 @@ SELECT pg_catalog.setval('public.user_id_seq', 1, true);
 -- Name: watch_later_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.watch_later_id_seq', 1, true);
+SELECT pg_catalog.setval('public.watch_later_id_seq', 2, true);
 
 
 --
@@ -1451,10 +1696,10 @@ ALTER TABLE ONLY public.age_rating
 
 
 --
--- Name: Cast cast_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: casting cast_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."Cast"
+ALTER TABLE ONLY public.casting
     ADD CONSTRAINT cast_unique UNIQUE (id);
 
 
@@ -1547,10 +1792,10 @@ ALTER TABLE ONLY public.movies_genres
 
 
 --
--- Name: user user_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: users user_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."user"
+ALTER TABLE ONLY public.users
     ADD CONSTRAINT user_unique UNIQUE (id);
 
 
@@ -1563,18 +1808,18 @@ ALTER TABLE ONLY public.watch_later
 
 
 --
--- Name: Cast cast_actor_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: casting cast_actor_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."Cast"
+ALTER TABLE ONLY public.casting
     ADD CONSTRAINT cast_actor_fk FOREIGN KEY (id_actor) REFERENCES public.actor(id);
 
 
 --
--- Name: Cast cast_movie_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: casting cast_movie_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."Cast"
+ALTER TABLE ONLY public.casting
     ADD CONSTRAINT cast_movie_fk FOREIGN KEY (id_movie) REFERENCES public.movie(id);
 
 
@@ -1591,7 +1836,7 @@ ALTER TABLE ONLY public.comments_and_ratings
 --
 
 ALTER TABLE ONLY public.comments_and_ratings
-    ADD CONSTRAINT comments_and_ratings_user_fk FOREIGN KEY (id_user) REFERENCES public."user"(id);
+    ADD CONSTRAINT comments_and_ratings_user_fk FOREIGN KEY (id_user) REFERENCES public.users(id);
 
 
 --
@@ -1623,7 +1868,7 @@ ALTER TABLE ONLY public.favourites
 --
 
 ALTER TABLE ONLY public.favourites
-    ADD CONSTRAINT favourites_user_fk FOREIGN KEY (id_user) REFERENCES public."user"(id);
+    ADD CONSTRAINT favourites_user_fk FOREIGN KEY (id_user) REFERENCES public.users(id);
 
 
 --
@@ -1631,7 +1876,7 @@ ALTER TABLE ONLY public.favourites
 --
 
 ALTER TABLE ONLY public.film_tutor_countries_movie
-    ADD CONSTRAINT film_tutor_countries_movie_film_tutor_fk FOREIGN KEY ("Id_film_tutor") REFERENCES public.film_tutor(id);
+    ADD CONSTRAINT film_tutor_countries_movie_film_tutor_fk FOREIGN KEY (id_film_tutor) REFERENCES public.film_tutor(id);
 
 
 --
@@ -1703,12 +1948,12 @@ ALTER TABLE ONLY public.watch_later
 --
 
 ALTER TABLE ONLY public.watch_later
-    ADD CONSTRAINT watch_later_user_fk FOREIGN KEY (id_user) REFERENCES public."user"(id);
+    ADD CONSTRAINT watch_later_user_fk FOREIGN KEY (id_user) REFERENCES public.users(id);
 
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict wpYuflFabK0Gkr7qb1kgfDprhhYKUo2YnaIDGAjDvvMdbfO57hEQa1wRxjAbAcL
+\unrestrict 1U71FKpCF5HIfk3RZXbMK60NmtSBbQ1tvtSvplF7BOQIdM9GY8FbYftSALKZtm5
 
