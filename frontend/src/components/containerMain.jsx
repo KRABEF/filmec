@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 export const ContainerMain = ({ movies }) => {
   const navigate = useNavigate();
   return (
-    <div className="max-w-full mx-auto lg:max-w-4/5 py-5 grid gap-5 grid-cols-1 lg:grid-cols-3 xl:grid-cols-4">
+    // <div className="max-w-full mx-auto py-5 grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+    <div className="flex flex-wrap justify-between max-w-full mx-auto py-5">
       {movies.map((movie) => (
         <div
           key={movie.id}
