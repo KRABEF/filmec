@@ -5,3 +5,4 @@ export { Avatar } from './ui/avatar';
 export { ActorCarousel } from './film/actorCarousel';
 export { CommentsFilm } from './film/commentsFilm';
 export { FilmCard } from './film/filmCard';
+export { Tabs } from './ui/tabs';
