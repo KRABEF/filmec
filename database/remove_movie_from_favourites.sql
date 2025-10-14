@@ -5,7 +5,7 @@ AS $function$
 BEGIN
     DELETE FROM favourites
     WHERE id_user = user_id AND id_movie = movie_id;
-RETURN true
+RETURN true;
 END;
 $function$
 ;
