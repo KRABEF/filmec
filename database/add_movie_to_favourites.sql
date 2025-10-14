@@ -5,7 +5,7 @@ AS $function$
 BEGIN
     INSERT INTO favourites (id_user, id_movie, date_added)
     VALUES (user_id, movie_id, CURRENT_DATE);
-RETURN true
+RETURN true;
 END;
 $function$
 ;
