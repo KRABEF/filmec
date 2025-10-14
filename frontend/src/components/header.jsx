@@ -28,7 +28,7 @@ export const Header = () => {
 						className={`flex gap-2 items-center select-none cursor-pointer`}
 						onClick={() => setIsOpen((prev) => !prev)}
 					>
-						<Avatar />
+						<Avatar width='w-10' height='h-10' />
 						<p>ivan@ivan.com</p>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
