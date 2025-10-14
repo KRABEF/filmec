@@ -5,7 +5,7 @@ export default function App() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex flex-grow">
-        <div className="lg:w-90 relative top-0 bg-neutral-900 lg:p-4">
+        <div className="relative top-0 dark:bg-neutral-900 bg-neutral-200 lg:p-2">
           <LeftMenu />
         </div>
         <div className="flex-grow overflow-auto p-4 h-[calc(100vh-100px)]">
