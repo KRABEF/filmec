@@ -23,13 +23,13 @@ SET row_security = off;
 -- Name: filmec; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE filmec WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'Russian_Russia.1251';
+CREATE DATABASE filmec1 WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'Russian_Russia.1251';
 
 
-ALTER DATABASE filmec OWNER TO postgres;
+ALTER DATABASE filmec1 OWNER TO postgres;
 
 \unrestrict 1U71FKpCF5HIfk3RZXbMK60NmtSBbQ1tvtSvplF7BOQIdM9GY8FbYftSALKZtm5
-\connect filmec
+\connect filmec1
 \restrict 1U71FKpCF5HIfk3RZXbMK60NmtSBbQ1tvtSvplF7BOQIdM9GY8FbYftSALKZtm5
 
 SET statement_timeout = 0;
@@ -50,11 +50,16 @@ SET row_security = off;
 
 CREATE FUNCTION public.add_movie_to_favourites(user_id integer, movie_id integer) RETURNS void
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-    INSERT INTO favourites (id_user, id_movie, date_added)
-    VALUES (user_id, movie_id, CURRENT_DATE);
-END;
+    AS $$
+
+BEGIN
+
+    INSERT INTO favourites (id_user, id_movie, date_added)
+
+    VALUES (user_id, movie_id, CURRENT_DATE);
+
+END;
+
 $$;
 
 
@@ -66,11 +71,16 @@ ALTER FUNCTION public.add_movie_to_favourites(user_id integer, movie_id integer)
 
 CREATE FUNCTION public.add_movie_to_watch_later(user_id integer, movie_id integer) RETURNS void
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-    INSERT INTO watch_later (id_user, id_movie, date_added)
-    VALUES (user_id, movie_id, CURRENT_DATE);
-END;
+    AS $$
+
+BEGIN
+
+    INSERT INTO watch_later (id_user, id_movie, date_added)
+
+    VALUES (user_id, movie_id, CURRENT_DATE);
+
+END;
+
 $$;
 
 
@@ -93,17 +103,28 @@ ALTER FUNCTION public.get_actors_by_movie(var_movie integer) OWNER TO postgres;
 
 CREATE FUNCTION public.get_movies_alphabetically() RETURNS TABLE(movie_name text, movie_release_date date, movie_cover text, movie_description text)
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-    RETURN QUERY
-    SELECT 
-        m.name AS movie_name,
-        m.release_date AS movie_release_date,
-        m.cover AS movie_cover,
-        m.description AS movie_description
-    FROM movie m
-    ORDER BY m.name;
-END;
+    AS $$
+
+BEGIN
+
+    RETURN QUERY
+
+    SELECT 
+
+        m.name AS movie_name,
+
+        m.release_date AS movie_release_date,
+
+        m.cover AS movie_cover,
+
+        m.description AS movie_description
+
+    FROM movie m
+
+    ORDER BY m.name;
+
+END;
+
 $$;
 
 
@@ -115,24 +136,42 @@ ALTER FUNCTION public.get_movies_alphabetically() OWNER TO postgres;
 
 CREATE FUNCTION public.get_movies_by_directors(var_director integer) RETURNS TABLE(movie_name text, movie_release_date date, movie_cover text, movie_description text, director_name text, director_surname text)
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        m.name AS movie_name,
-        m.release_date,
-        m.cover,
-        m.description,
-        d.name AS director_name,
-        d.surname AS director_surname
-    FROM
-        director_movie dm
-    LEFT JOIN
-        director d ON dm.id_director = d.id
-	LEFT JOIN
-		movie m ON dm.id_movie = m.id
-	WHERE dm.id_director = var_director;
-END;
+    AS $$
+
+BEGIN
+
+    RETURN QUERY
+
+    SELECT
+
+        m.name AS movie_name,
+
+        m.release_date,
+
+        m.cover,
+
+        m.description,
+
+        d.name AS director_name,
+
+        d.surname AS director_surname
+
+    FROM
+
+        director_movie dm
+
+    LEFT JOIN
+
+        director d ON dm.id_director = d.id
+
+	LEFT JOIN
+
+		movie m ON dm.id_movie = m.id
+
+	WHERE dm.id_director = var_director;
+
+END;
+
 $$;
 
 
@@ -144,23 +183,40 @@ ALTER FUNCTION public.get_movies_by_directors(var_director integer) OWNER TO pos
 
 CREATE FUNCTION public.get_movies_by_genres(var_geners integer) RETURNS TABLE(movie_name text, movie_release_date date, movie_cover text, movie_description text, genres text)
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        m.name AS movie_name,
-        m.release_date AS movie_release_date,
-        m.cover AS movie_cover,
-        m.description AS movie_description,
-        g.genres AS genres
-    FROM
-        movies_genres mg
-    LEFT JOIN
-        genre g ON mg.id_genres  = g.id
-    LEFT JOIN
-		movie m ON mg.id_movies = m.id
-    WHERE mg.id_genres  = var_geners;
-END;
+    AS $$
+
+BEGIN
+
+    RETURN QUERY
+
+    SELECT
+
+        m.name AS movie_name,
+
+        m.release_date AS movie_release_date,
+
+        m.cover AS movie_cover,
+
+        m.description AS movie_description,
+
+        g.genres AS genres
+
+    FROM
+
+        movies_genres mg
+
+    LEFT JOIN
+
+        genre g ON mg.id_genres  = g.id
+
+    LEFT JOIN
+
+		movie m ON mg.id_movies = m.id
+
+    WHERE mg.id_genres  = var_geners;
+
+END;
+
 $$;
 
 
@@ -172,32 +228,58 @@ ALTER FUNCTION public.get_movies_by_genres(var_geners integer) OWNER TO postgres
 
 CREATE FUNCTION public.get_movies_info() RETURNS TABLE(movie_name text, cover text, description text, duration_movie time without time zone, release_date date, country text, director_name text, director_surname text, rating text, tutor_name text, genres text)
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-    RETURN QUERY
-    SELECT 
-        m.name AS movie_name, 
-        m.cover, 
-        m.description, 
-        m.duration_movie, 
-        m.release_date, 
-        c.country, 
-        d.name AS director_name, 
-        d.surname AS director_surname, 
-        ar.rating, 
-        ft.name AS tutor_name,
-        g.genres
-    FROM movie m 
-    LEFT JOIN age_rating ar ON m.id_age_rating = ar.id 
-    LEFT JOIN movie_country mc ON m.id = mc.id_movie 
-    LEFT JOIN countries c ON mc.id_country = c.id 
-    LEFT JOIN director_movie dm ON m.id = dm.id_movie 
-    LEFT JOIN director d ON dm.id_director = d.id 
-    LEFT JOIN movies_genres mg ON m.id = mg.id_movies 
-    LEFT JOIN genre g ON mg.id_genres = g.id
-    LEFT JOIN film_tutor_countries_movie ftcm ON m.id = ftcm.id_movie 
-    LEFT JOIN film_tutor ft ON ftcm.id_film_tutor = ft.id ORDER BY m.name; 
-END;
+    AS $$
+
+BEGIN
+
+    RETURN QUERY
+
+    SELECT 
+
+        m.name AS movie_name, 
+
+        m.cover, 
+
+        m.description, 
+
+        m.duration_movie, 
+
+        m.release_date, 
+
+        c.country, 
+
+        d.name AS director_name, 
+
+        d.surname AS director_surname, 
+
+        ar.rating, 
+
+        ft.name AS tutor_name,
+
+        g.genres
+
+    FROM movie m 
+
+    LEFT JOIN age_rating ar ON m.id_age_rating = ar.id 
+
+    LEFT JOIN movie_country mc ON m.id = mc.id_movie 
+
+    LEFT JOIN countries c ON mc.id_country = c.id 
+
+    LEFT JOIN director_movie dm ON m.id = dm.id_movie 
+
+    LEFT JOIN director d ON dm.id_director = d.id 
+
+    LEFT JOIN movies_genres mg ON m.id = mg.id_movies 
+
+    LEFT JOIN genre g ON mg.id_genres = g.id
+
+    LEFT JOIN film_tutor_countries_movie ftcm ON m.id = ftcm.id_movie 
+
+    LEFT JOIN film_tutor ft ON ftcm.id_film_tutor = ft.id ORDER BY m.name; 
+
+END;
+
 $$;
 
 
@@ -209,24 +291,42 @@ ALTER FUNCTION public.get_movies_info() OWNER TO postgres;
 
 CREATE FUNCTION public.get_movies_with_actor(var_actor integer) RETURNS TABLE(movie_name text, movie_release_date date, movie_cover text, movie_description text, actor_name text, actor_surname text)
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        m.name AS movie_name,
-        m.release_date AS movie_release_date,
-        m.cover AS movie_cover,
-        m.description AS movie_description,
-        a.name AS actor_name,
-        a.surname AS actor_surname
-    FROM
-        casting c
-    LEFT JOIN
-        actor a ON c.id_actor = a.id
-    LEFT JOIN
-		movie m ON c.id_movie = m.id
-    WHERE c.id_actor = var_actor;
-END;
+    AS $$
+
+BEGIN
+
+    RETURN QUERY
+
+    SELECT
+
+        m.name AS movie_name,
+
+        m.release_date AS movie_release_date,
+
+        m.cover AS movie_cover,
+
+        m.description AS movie_description,
+
+        a.name AS actor_name,
+
+        a.surname AS actor_surname
+
+    FROM
+
+        casting c
+
+    LEFT JOIN
+
+        actor a ON c.id_actor = a.id
+
+    LEFT JOIN
+
+		movie m ON c.id_movie = m.id
+
+    WHERE c.id_actor = var_actor;
+
+END;
+
 $$;
 
 
@@ -238,11 +338,16 @@ ALTER FUNCTION public.get_movies_with_actor(var_actor integer) OWNER TO postgres
 
 CREATE FUNCTION public.remove_movie_from_favourites(user_id integer, movie_id integer) RETURNS void
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-    DELETE FROM favourites
-    WHERE id_user = user_id AND id_movie = movie_id;
-END;
+    AS $$
+
+BEGIN
+
+    DELETE FROM favourites
+
+    WHERE id_user = user_id AND id_movie = movie_id;
+
+END;
+
 $$;
 
 
@@ -254,11 +359,16 @@ ALTER FUNCTION public.remove_movie_from_favourites(user_id integer, movie_id int
 
 CREATE FUNCTION public.remove_movie_from_watch_later(user_id integer, movie_id integer) RETURNS void
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-    DELETE FROM watch_later
-    WHERE id_user = user_id AND id_movie = movie_id;
-END;
+    AS $$
+
+BEGIN
+
+    DELETE FROM watch_later
+
+    WHERE id_user = user_id AND id_movie = movie_id;
+
+END;
+
 $$;
 
 
