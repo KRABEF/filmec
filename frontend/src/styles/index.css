@@ -16,7 +16,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-neutral-950 rounded-full;
+  @apply dark:bg-neutral-950 bg-neutral-400 rounded-full;
 }
 
 @keyframes gradient-x {

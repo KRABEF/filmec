@@ -18,7 +18,7 @@ export const Header = () => {
   }, [setIsOpen]);
 
   return (
-    <div className="p-2 bg-neutral-900 shadow-xl">
+    <div className="p-2 dark:bg-neutral-900 bg-neutral-800 shadow-xl">
       <div className="flex justify-between items-center m-auto container">
         <div onClick={() => navigate('/')}>
           <img className="w-20" src="/logo.svg"></img>

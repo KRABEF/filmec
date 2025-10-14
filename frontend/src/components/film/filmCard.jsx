@@ -6,7 +6,9 @@ export const FilmCard = ({ film }) => {
   const [isLiked, setIsLiked] = useState(false);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 bg-gradient-to-bl from-neutral-900 to-neutral-900 rounded-xl shadow-lg p-6">
+    <div className="flex flex-col lg:flex-row gap-8 bg-gradient-to-bl from-neutral-200 to-neutral-200 rounded-xl shadow-lg p-6
+    dark:from-neutral-900 dark:to-neutral-900
+    ">
       <div className="flex-shrink-0 mx-auto lg:mx-0 ">
         <div className="relative">
           <img
@@ -48,7 +50,7 @@ export const FilmCard = ({ film }) => {
           </Button>
           <button
             onClick={() => setIsSaved(prev => !prev)}
-            className="flex items-center justify-center shadow-lg bg-neutral-800/80 rounded-xl p-4 min-w-[80px] hover:bg-neutral-700/50 transition-colors group"
+            className="flex items-center justify-center shadow-lg dark:bg-neutral-800/80 bg-neutral-300 rounded-xl p-4 min-w-[80px] hover:bg-neutral-400/40 hover:dark:bg-neutral-700/50 transition-colors group"
           >
             <div className="text-center">
               {isSaved ? (
@@ -68,7 +70,7 @@ export const FilmCard = ({ film }) => {
                   width="20"
                   height="20"
                   fill="currentColor"
-                  className="bi bi-bookmark text-neutral-400 group-hover:text-orange-400 transition-all duration-200"
+                  className="bi bi-bookmark dark:text-neutral-400 text-neutral-500 group-hover:text-orange-400 transition-all duration-200"
                   viewBox="0 0 16 16"
                 >
                   <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z" />
@@ -82,14 +84,14 @@ export const FilmCard = ({ film }) => {
       <div className="flex-grow">
         <div className="flex flex-col lg:flex-row lg:items-start justify-between">
           <div className="flex items-center gap-3">
-            <h2 className="text-3xl lg:text-4xl font-bold text-white">{film.name}</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold">{film.name}</h2>
             <span className="px-2 py-1 border border-neutral-400 text-neutral-400 text-xs font-bold rounded-md">
               {film.ageLimit}
             </span>
           </div>
 
           <div className="flex gap-3 justify-center my-2 lg:m-0">
-            <div className="flex items-center justify-center gap-3 bg-neutral-800/50 rounded-xl p-4 min-w-[80px] shadow-lg">
+            <div className="flex items-center justify-center gap-3 dark:bg-neutral-800/50 bg-neutral-300/50 rounded-xl p-4 min-w-[80px] shadow-lg">
               <div className="text-center">
                 <div className="text-2xl font-bold text-orange-500">{film.rating}</div>
                 <div className="text-xs text-neutral-400">IMDb</div>
@@ -100,7 +102,7 @@ export const FilmCard = ({ film }) => {
 
         <div className="flex flex-col gap-6 mb-6">
           <div className="">
-            <h3 className="text-xl font-semibold text-white flex items-center gap-2 my-4">
+            <h3 className="text-xl font-semibold flex items-center gap-2 my-4">
               О фильме
             </h3>
             <div className="grid grid-cols-1 w-full max-w-md">
@@ -111,10 +113,10 @@ export const FilmCard = ({ film }) => {
           </div>
 
           <div>
-            <h4 className="text-xl font-semibold text-white flex items-center gap-2 mb-3">
+            <h4 className="text-xl font-semibold flex items-center gap-2 mb-3">
               Описание
             </h4>
-            <div className="relative text-neutral-300">
+            <div className="relative dark:text-neutral-300">
               <input type="checkbox" id={film.id} className="hidden peer" />
               {film.description.length <= 200 ? (
                 <p>{film.description}</p>
@@ -139,8 +141,8 @@ export const FilmCard = ({ film }) => {
 const FilmDetailRow = ({ name, detail }) => {
   return (
     <div className="grid grid-cols-2 gap-2 py-1">
-      <span className="text-gray-300 text-sm">{name}</span>
-      <span className="text-white font-medium ">{detail}</span>
+      <span className="dark:text-gray-300 text-gray-500 text-sm">{name}</span>
+      <span className="dark:text-white font-medium ">{detail}</span>
     </div>
   );
 };
