@@ -6,4 +6,4 @@ export { ActorCarousel } from './film/actorCarousel';
 export { CommentsFilm } from './film/commentsFilm';
 export { FilmCard } from './film/filmCard';
 export { Tabs } from './ui/tabs';
-export { ToggleTheme } from './ui/toggleTheme';
+export { ThemeToggle } from './ui/themeSwitch';

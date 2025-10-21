@@ -8,7 +8,7 @@ export const Button = ({ children, className = '', ...props }) => {
                  transition-all duration-300 
                  shadow-lg hover:shadow-xl 
                  transform hover:scale-105
-                 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-neutral-900
+                 focus:outline-none focus:ring-2 focus:ring-orange-500
                  ${className}`}
       {...props}
     >

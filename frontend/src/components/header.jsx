@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar } from './ui/avatar';
 import { DropDowmMenu } from './ui/dropDowmMenu';
-import { ToggleTheme } from './ui/toggleTheme';
+import { ThemeToggle } from './ui/themeSwitch';
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,20 +18,20 @@ export const Header = () => {
   }, [setIsOpen]);
 
   return (
-    <div className="p-2 dark:bg-neutral-900 bg-neutral-800 shadow-xl">
+    <div className="p-2 bg-neutral-900 shadow-xl">
       <div className="flex justify-between items-center m-auto container">
         <div onClick={() => navigate('/')}>
           <img className="w-20" src="/logo.svg"></img>
         </div>
         <div className="flex items-center gap-3">
-          <ToggleTheme />
+          <ThemeToggle />
 
           <div className="text-neutral-300 relative" ref={menuRef}>
             <div
               className={`flex gap-2 items-center select-none cursor-pointer`}
               onClick={() => setIsOpen((prev) => !prev)}
             >
-              <Avatar />
+              <Avatar width="w-10" height="h-10" />
               <p>ivan@ivan.com</p>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

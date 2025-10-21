@@ -8,7 +8,7 @@ export const ContainerMain = ({ movies }) => {
         {movies.map((movie) => (
           <div
             key={movie.id}
-            className="flex flex-col bg-neutral-900 rounded-xl shadow-xl hover:shadow-orange-500/10 transition-all duration-300 p-3 group"
+            className="flex flex-col dark:bg-neutral-900 bg-neutral-200 rounded-xl dark:shadow-xl shadow-lg hover:shadow-orange-500/10 transition-all duration-300 p-3 group"
           >
             <div className="relative mb-3" onClick={() => navigate(`/movie/${movie.id}`)}>
               <img
@@ -26,7 +26,7 @@ export const ContainerMain = ({ movies }) => {
             </div>
 
             <div className="cursor-pointer" onClick={() => navigate(`/movie/${movie.id}`)}>
-              <h2 className="text-lg font-bold text-white group-hover:text-orange-400 transition-colors duration-300 line-clamp-2">
+              <h2 className="text-lg font-bold group-hover:text-orange-400 transition-colors duration-300 line-clamp-2">
                 {movie.name}
               </h2>
             </div>
