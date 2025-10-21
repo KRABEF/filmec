@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar } from './ui/avatar';
 import { DropDowmMenu } from './ui/dropDowmMenu';
+import { ThemeToggle } from './ui/themeSwitch';
 
 export const Header = () => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +29,7 @@ export const Header = () => {
 						className={`flex gap-2 items-center select-none cursor-pointer`}
 						onClick={() => setIsOpen((prev) => !prev)}
 					>
+						<ThemeToggle />
 						<Avatar width='w-10' height='h-10' />
 						<p>ivan@ivan.com</p>
 						<svg
