@@ -1,4 +1,4 @@
-const express =  require('express');
+const express =	require('express');
 const route = express.Router();
 const pool = require('../middlewares/conect');
 
@@ -20,8 +20,23 @@ route.post('/', async (req, res) => {
 
     route.get('/', async (req, res) => {
 		try {
-			const result = await pool.query(`SELECT * FROM users`);
+			const result = await pool.query(`SELECT * FROM users;`);
 					res.json(result.rows)
+		} catch (err) {
+			console.error(err);
+			res.sendStatus(500);
+		}
+	});
+
+module.exports = route
+    route.get('/:id', async (req, res) => {
+		try {
+			const userId = req.params.id;
+			const result = await pool.query(`SELECT * FROM users WHERE id = $1;, [userId]`);
+			if (result.rows.lenght === 0) {
+				return res.status(404).json({error: 'not user'});
+			}
+					res.json(result.rows[0])
 		} catch (err) {
 			console.error(err);
 			res.sendStatus(500);
