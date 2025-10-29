@@ -60,4 +60,58 @@ route.post('/create', async (req, res) => {
 			res.sendStatus(500);
 		}
 	});
+
+    route.get('/editing/:id', async (req, res) => {
+		try {
+			const userId = req.params.id;
+			const { login, email, password } = req.body;
+			if (!login && !email && !password ) {
+				return res.status(404).json({error: 'editing one (login, email or password )'});
+			}
+				let query = 'UPDATE users set';
+			const values = [];
+			let paramCount = 1;
+			if (login) {
+				query += `login = $${paramCount}, `;
+				values.push(login);
+				paramCount++;
+			}
+			if (password) {
+				query += `password = $${paramCount}, `;
+				values.push(password);
+				paramCount++;
+			}
+			if (email) {
+				query += `email = $${paramCount}, `;
+				values.push(email);
+				paramCount++;
+			}
+			query=query.slice(0,-2) + `WHERE id =$${paramCount} RETURNING *`;
+			values.push(userId);
+
+			const result = await pool.query(query, values);
+
+			if (result.rows.length === 0) {
+				return res.status(404).json({error: 'User not found'});
+			}
+
+			res.json({
+				message: 'User updated successfully',
+				updatedUser: result.rows[0]
+			});
+
+		} catch (err) {
+			console.error(err);
+			res.sendStatus(500);
+		}
+	});
+
+
+
+
+
+
+
+
+
 module.exports = route
