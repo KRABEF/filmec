@@ -2,7 +2,7 @@ const express =	require('express');
 const route = express.Router();
 const pool = require('../middlewares/conect');
 
-route.post('/', async (req, res) => {
+route.post('/create', async (req, res) => {
     const { login, email, password} = req.body;
 
 		try {
@@ -18,7 +18,7 @@ route.post('/', async (req, res) => {
 		}
 	});
 
-    route.get('/', async (req, res) => {
+    route.get('/select', async (req, res) => {
 		try {
 			const result = await pool.query(`SELECT * FROM users;`);
 					res.json(result.rows)
@@ -28,11 +28,10 @@ route.post('/', async (req, res) => {
 		}
 	});
 
-module.exports = route
-    route.get('/:id', async (req, res) => {
+    route.get('/id/:id', async (req, res) => {
 		try {
 			const userId = req.params.id;
-			const result = await pool.query(`SELECT * FROM users WHERE id = $1;, [userId]`);
+			const result = await pool.query(`SELECT * FROM users WHERE id = $1;`, [userId]);
 			if (result.rows.lenght === 0) {
 				return res.status(404).json({error: 'not user'});
 			}
@@ -43,4 +42,22 @@ module.exports = route
 		}
 	});
 
+
+	    route.delete('/deleted/:id', async (req, res) => {
+		try {
+			const userId = req.params.id;
+			const result = await pool.query(`DELETE FROM users WHERE id = $1 RETURNING *;`, [userId]);
+			if (result.rows.lenght === 0) {
+				return res.status(404).json({error: 'not user'});
+			}
+					res.json({
+						message: 'User deleted',
+						deletedUser: result.rows[0]
+						
+					});
+		} catch (err) {
+			console.error(err);
+			res.sendStatus(500);
+		}
+	});
 module.exports = route
