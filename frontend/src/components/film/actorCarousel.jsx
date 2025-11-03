@@ -82,7 +82,7 @@ const ArrowButton = ({ children, onClick, direction }) => {
   return (
     <button
       onClick={onClick}
-      className={`active:scale-95 duration-100 p-4 rounded-full dark:bg-neutral-900/70 bg-neutral-300/70 hover:bg-orange-600 hover:text-white dark:text-neutral-300 text-neutral-700 transition-all shadow-lg absolute top-1/2 transform -translate-y-1/2 z-10 ${
+      className={`active:scale-95 duration-100 p-4 rounded-full dark:bg-neutral-900/70 bg-neutral-300/70 hover:bg-orange-600 hover:text-white dark:text-neutral-300 text-neutral-700 transition-all dark:shadow-lg absolute top-1/2 transform -translate-y-1/2 z-10 ${
         direction === 'prev' ? '-left-18' : '-right-18'
       }`}
     >

@@ -26,7 +26,7 @@ export const ContainerMain = ({ movies }) => {
             </div>
 
             <div className="cursor-pointer" onClick={() => navigate(`/movie/${movie.id}`)}>
-              <h2 className="text-lg font-bold group-hover:text-orange-400 transition-colors duration-300 line-clamp-2">
+              <h2 className="text-lg font-bold group-hover:text-orange-600 transition-colors duration-300 line-clamp-2">
                 {movie.name}
               </h2>
             </div>

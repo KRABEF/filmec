@@ -34,13 +34,13 @@ export function ThemeToggle() {
       <button
         onClick={toggleTheme}
         aria-label="Переключить тему"
-        className="relative w-20 h-10 rounded-full bg-neutral-800 shadow-lg transition-colors duration-300 overflow-hidden"
+        className="relative w-18 h-10 rounded-full bg-neutral-800 shadow-lg transition-colors duration-300 overflow-hidden"
       >
         <div className={`absolute inset-0 transition-colors duration-300 bg-neutral-700`} />
 
         <div
           className={`absolute top-1 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center transition-transform duration-300 transform ${
-            isDark ? 'translate-x-11' : 'translate-x-1'
+            isDark ? 'translate-x-9' : 'translate-x-1'
           }`}
         >
           {isDark ? (
