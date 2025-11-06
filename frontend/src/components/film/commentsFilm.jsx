@@ -82,14 +82,14 @@ export const CommentsFilm = () => {
           >
             Сохранить
           </button>
-          {true && (
+          {/* {true && (
             <button
               onClick={handleSubmit}
               className="dark:bg-neutral-900/60 bg-neutral-300 dark:text-neutral-400 text-neutral-700  py-2 px-4 rounded-lg hover:bg-neutral-900 hover:text-white active:scale-95 shadow-lg"
             >
               Удалить
             </button>
-          )}
+          )} */}
         </div>
       </div>
     </div>
