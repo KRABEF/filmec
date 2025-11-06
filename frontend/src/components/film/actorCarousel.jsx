@@ -59,7 +59,7 @@ export const ActorCarousel = ({ actors }) => {
                       className="w-40 h-40 rounded-full object-cover mx-auto"
                     />
                   ) : (
-                    <div className="w-40 h-40 rounded-full dark:bg-neutral-600 bg-neutral-300 flex items-center justify-center dark:text-neutral-200 text-3xl">
+                    <div className="w-40 h-40 rounded-full dark:bg-neutral-600 bg-neutral-200 flex items-center justify-center dark:text-neutral-200 text-3xl">
                       {actor.name[0]}
                     </div>
                   )}
@@ -82,7 +82,7 @@ const ArrowButton = ({ children, onClick, direction }) => {
   return (
     <button
       onClick={onClick}
-      className={`active:scale-95 p-4 rounded-full dark:bg-neutral-900/70 bg-neutral-300/70 hover:bg-orange-600 hover:text-white dark:text-neutral-300 text-neutral-700 dark:shadow-lg absolute top-1/2 transform -translate-y-1/2 z-10 ${
+      className={`active:scale-95 p-3 rounded-full dark:bg-neutral-900/70 bg-neutral-200 hover:bg-neutral-300 dark:hover:bg-neutral-900 dark:text-neutral-300 text-neutral-700 dark:shadow-lg absolute top-1/2 transform -translate-y-1/2 z-10 ${
         direction === 'prev' ? '-left-18' : '-right-18'
       }`}
     >

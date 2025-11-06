@@ -60,7 +60,7 @@ export const CommentsFilm = () => {
                   <p>Лучшая оценка</p>
                 </div>
               </div>
-              <div className="lg:flex hidden items-center justify-center gap-3 dark:bg-neutral-900/50 bg-neutral-300/50 rounded-xl p-4 w-[80px] h-[80px] shadow-lg">
+              <div className="lg:flex hidden items-center justify-center gap-3 dark:bg-neutral-900/50 bg-neutral-200/50 rounded-xl p-4 w-[80px] h-[80px] shadow-lg">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-orange-500">0</div>
                 </div>

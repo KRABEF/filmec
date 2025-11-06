@@ -7,7 +7,7 @@ export const FilmCard = ({ film }) => {
 
   return (
     <div
-      className="flex flex-col lg:flex-row gap-8 bg-gradient-to-bl from-neutral-200 to-neutral-200 rounded-xl shadow-lg p-6
+      className="flex flex-col lg:flex-row gap-8 bg-gradient-to-bl from-neutral-50 to-neutral-100 rounded-xl shadow-lg p-6
     dark:from-neutral-900 dark:to-neutral-900
     "
     >
@@ -52,7 +52,7 @@ export const FilmCard = ({ film }) => {
           </Button>
           <button
             onClick={() => setIsSaved((prev) => !prev)}
-            className="flex items-center justify-center shadow-lg  dark:bg-neutral-800/80 bg-neutral-300 rounded-xl p-4 min-w-[80px] hover:bg-neutral-400/40 hover:dark:bg-neutral-700/50 group"
+            className="flex items-center justify-center shadow-lg  dark:bg-neutral-800/80 bg-neutral-200 rounded-xl p-4 min-w-[80px] hover:bg-neutral-300/40 hover:dark:bg-neutral-700/50 group"
           >
             <div className="text-center">
               {isSaved ? (
@@ -93,7 +93,7 @@ export const FilmCard = ({ film }) => {
           </div>
 
           <div className="flex gap-3 justify-center my-2 lg:m-0">
-            <div className="flex items-center justify-center gap-3 dark:bg-neutral-800/50 bg-neutral-300/50 rounded-xl p-4 min-w-[80px] shadow-lg">
+            <div className="flex items-center justify-center gap-3 dark:bg-neutral-800/50 bg-neutral-100 rounded-xl p-4 min-w-[80px] shadow-lg">
               <div className="text-center">
                 <div className="text-2xl font-bold text-orange-500">{film.rating}</div>
                 <div className="text-xs text-neutral-400">IMDb</div>

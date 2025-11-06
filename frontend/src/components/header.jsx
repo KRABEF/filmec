@@ -24,7 +24,7 @@ export const Header = () => {
           <img className="w-20" src="/logo.svg"></img>
         </div>
         <div className="flex items-center gap-3">
-          <ThemeToggle />
+          
 
           <div className="text-neutral-300 relative" ref={menuRef}>
             <div
@@ -56,6 +56,7 @@ export const Header = () => {
               />
             )}
           </div>
+          <ThemeToggle />
         </div>
       </div>
     </div>

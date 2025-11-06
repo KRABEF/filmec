@@ -274,7 +274,7 @@ export const LeftMenu = ({ onFiltersChange }) => {
       </div>
 
       {/* Десктопная версия (оригинальная) */}
-      <div className="hidden  shadow-md lg:block w-80 dark:bg-neutral-900 bg-neutral-200 rounded-lg p-6 dark:border dark:border-neutral-800">
+      <div className="hidden  shadow-lg lg:block w-80 dark:bg-neutral-900 bg-neutral-50 rounded-lg p-6">
         {/* Оригинальный код десктопной версии */}
         <div className="mb-6">
           <button
@@ -295,7 +295,9 @@ export const LeftMenu = ({ onFiltersChange }) => {
                     onChange={() => handleGenreToggle(genre)}
                     className="w-4 h-4 accent-orange-500"
                   />
-                  <span className="text-neutral-800 hover:text-black dark:text-neutral-300 dark:hover:text-white">{genre}</span>
+                  <span className="text-neutral-800 hover:text-black dark:text-neutral-300 dark:hover:text-white">
+                    {genre}
+                  </span>
                 </label>
               ))}
             </div>
@@ -315,13 +317,11 @@ export const LeftMenu = ({ onFiltersChange }) => {
               step="1"
               value={filters.minRating}
               onChange={(e) => handleRatingChange(parseInt(e.target.value))}
-              className="w-full h-1.5 dark:bg-neutral-700 bg-neutral-400 rounded-full appearance-none cursor-pointer 
-                       [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 
-                       [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-orange-500 
-                       [&::-webkit-slider-thumb]:border-2 dark:[&::-webkit-slider-thumb]:border-neutral-900 
-                    [&::-webkit-slider-thumb]:border-orange-600 
-                       [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full 
-                       [&::-moz-range-thumb]:bg-orange-500 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-neutral-900"
+              className="w-full h-1.5 bg-gradient-to-r from-orange-400/40 to-orange-600/40 rounded-full appearance-none cursor-pointer 
+                 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 
+                 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-orange-500 
+                 [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(255,140,0,0.5)]
+                 "
             />
             <div className="flex justify-between px-1 mt-3">
               {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
@@ -365,8 +365,8 @@ export const LeftMenu = ({ onFiltersChange }) => {
                 onChange={handleYearInputChange}
                 min="1900"
                 max={currentYear}
-                className="w-30 px-2 py-1 dark:bg-neutral-800 bg-neutral-300 border dark:border-neutral-600 border-neutral-400 rounded text-md 
-                         focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-24 px-2 py-1 bg-white dark:bg-neutral-800 border border-neutral-200/90 dark:border-neutral-900/90 rounded-lg text-neutral-800 dark:text-neutral-100 text-md 
+                   focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-xs"
               />
             </div>
           </div>

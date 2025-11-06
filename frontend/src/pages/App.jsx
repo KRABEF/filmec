@@ -4,8 +4,8 @@ import { LeftMenu } from '../components/leftMenu';
 export default function App() {
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex flex-grow">
-        <div className="relative top-0 lg:p-2">
+      <main className="flex flex-grow py-3">
+        <div className="relative top-0 lg:p-4">
           <LeftMenu />
         </div>
         <div className="flex-grow overflow-auto p-4 h-[calc(100vh-100px)]">
