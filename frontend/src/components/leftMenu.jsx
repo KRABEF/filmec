@@ -94,24 +94,26 @@ export const LeftMenu = ({ onFiltersChange }) => {
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg shadow-lg"
         >
-          { '☰ Фильтры'}
+          {'☰ Фильтры'}
         </Button>
       </div>
 
       {/* Оверлей */}
       {isMenuOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black/70 z-40"
           onClick={() => setIsMenuOpen(false)}
         />
       )}
 
       {/* Мобильное меню */}
-      <div className={`
+      <div
+        className={`
         lg:hidden fixed left-0 top-0 h-full w-80 bg-neutral-900 rounded-r-lg p-6 border-r border-neutral-800 
-        transform transition-transform duration-300 ease-in-out z-1000 overflow-y-auto
+        transform z-1000 overflow-y-auto
         ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
+      `}
+      >
         {/* Заголовок и кнопка закрытия */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-xl font-bold text-white">Фильтры</h1>
@@ -159,9 +161,7 @@ export const LeftMenu = ({ onFiltersChange }) => {
             onClick={() => setIsRatingOpen(!isRatingOpen)}
             className="flex justify-between items-center w-full text-left py-3"
           >
-            <h3 className="text-lg font-semibold text-white">
-              Рейтинг от {filters.minRating}
-            </h3>
+            <h3 className="text-lg font-semibold text-white">Рейтинг от {filters.minRating}</h3>
             <span className="text-neutral-400 text-xl">{isRatingOpen ? '−' : '+'}</span>
           </button>
 
@@ -180,7 +180,7 @@ export const LeftMenu = ({ onFiltersChange }) => {
                            [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-orange-500 
                            [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-neutral-900 
                            [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:rounded-full 
-                           [&::-moz-range-thumb]:bg-orange-500 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-neutral-900"
+                           [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-neutral-900"
                 />
                 {/* Деления */}
                 <div className="flex justify-between px-1 mt-4">
@@ -257,13 +257,13 @@ export const LeftMenu = ({ onFiltersChange }) => {
 
         {/* Кнопки действий */}
         <div className="flex flex-col space-y-3 mt-8">
-          <Button 
+          <Button
             onClick={() => setIsMenuOpen(false)}
             className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 text-base font-semibold"
           >
             Применить фильтры
           </Button>
-          <Button 
+          <Button
             onClick={resetFilters}
             variant="outline"
             className="w-full border-neutral-600 text-neutral-300 hover:bg-neutral-800 py-3 text-base"
@@ -274,14 +274,14 @@ export const LeftMenu = ({ onFiltersChange }) => {
       </div>
 
       {/* Десктопная версия (оригинальная) */}
-      <div className="hidden lg:block w-80 bg-neutral-900 rounded-lg p-6 border border-neutral-800">
+      <div className="hidden  shadow-md lg:block w-80 dark:bg-neutral-900 bg-neutral-200 rounded-lg p-6 dark:border dark:border-neutral-800">
         {/* Оригинальный код десктопной версии */}
         <div className="mb-6">
           <button
             onClick={() => setIsGenresOpen(!isGenresOpen)}
             className="flex justify-between items-center w-full text-left"
           >
-            <h2 className="text-xl font-bold text-white">Жанры</h2>
+            <h2 className="text-xl font-bold">Жанры</h2>
             <span className="text-neutral-400">{isGenresOpen ? '−' : '+'}</span>
           </button>
 
@@ -295,17 +295,17 @@ export const LeftMenu = ({ onFiltersChange }) => {
                     onChange={() => handleGenreToggle(genre)}
                     className="w-4 h-4 accent-orange-500"
                   />
-                  <span className="text-neutral-300 hover:text-white">{genre}</span>
+                  <span className="text-neutral-800 hover:text-black dark:text-neutral-300 dark:hover:text-white">{genre}</span>
                 </label>
               ))}
             </div>
           )}
         </div>
 
-        <div className="border-t border-neutral-800 my-4"></div>
+        <div className="border-t dark:border-neutral-800 border-neutral-300 my-4"></div>
 
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-white mb-3">Рейтинг от {filters.minRating}</h3>
+          <h3 className="text-lg font-semibold mb-3">Рейтинг от {filters.minRating}</h3>
 
           <div className="relative">
             <input
@@ -315,10 +315,11 @@ export const LeftMenu = ({ onFiltersChange }) => {
               step="1"
               value={filters.minRating}
               onChange={(e) => handleRatingChange(parseInt(e.target.value))}
-              className="w-full h-1.5 bg-neutral-700 rounded-full appearance-none cursor-pointer 
+              className="w-full h-1.5 dark:bg-neutral-700 bg-neutral-400 rounded-full appearance-none cursor-pointer 
                        [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 
                        [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-orange-500 
-                       [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-neutral-900 
+                       [&::-webkit-slider-thumb]:border-2 dark:[&::-webkit-slider-thumb]:border-neutral-900 
+                    [&::-webkit-slider-thumb]:border-orange-600 
                        [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full 
                        [&::-moz-range-thumb]:bg-orange-500 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-neutral-900"
             />
@@ -338,7 +339,7 @@ export const LeftMenu = ({ onFiltersChange }) => {
         </div>
 
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-white mb-3">Возрастной рейтинг:</h3>
+          <h3 className="text-lg font-semibold mb-3">Возрастной рейтинг:</h3>
           <div className="grid grid-cols-2 gap-2">
             {ageRatings.map((rating) => (
               <label key={rating} className="flex items-center space-x-2 cursor-pointer">
@@ -348,7 +349,7 @@ export const LeftMenu = ({ onFiltersChange }) => {
                   onChange={() => handleAgeRatingToggle(rating)}
                   className="w-4 h-4 accent-orange-500"
                 />
-                <span className="text-neutral-300">{rating}</span>
+                <span className="dark:text-neutral-300 text-neutral-700">{rating}</span>
               </label>
             ))}
           </div>
@@ -356,7 +357,7 @@ export const LeftMenu = ({ onFiltersChange }) => {
 
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold text-white">Год выпуска от</h3>
+            <h3 className="text-lg font-semibold">Год выпуска от</h3>
             <div className="flex items-center space-x-2">
               <input
                 type="number"
@@ -364,14 +365,12 @@ export const LeftMenu = ({ onFiltersChange }) => {
                 onChange={handleYearInputChange}
                 min="1900"
                 max={currentYear}
-                className="w-30 px-2 py-1 bg-neutral-800 border border-neutral-600 rounded text-white text-md 
+                className="w-30 px-2 py-1 dark:bg-neutral-800 bg-neutral-300 border dark:border-neutral-600 border-neutral-400 rounded text-md 
                          focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
             </div>
           </div>
-          <Button>
-            Найти
-          </Button>
+          <Button>Найти</Button>
         </div>
       </div>
     </>

@@ -60,7 +60,7 @@ export default function Profile() {
         <div className="flex gap-8 mb-8">
           <button
             onClick={() => setActiveTab('favorites')}
-            className={`pb-2 text-lg font-medium relative transition-all duration-200 ${
+            className={`pb-2 text-lg font-medium relative ${
               activeTab === 'favorites'
                 ? 'text-amber-600 after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-full after:bg-amber-600'
                 : 'text-gray-500 hover:text-gray-700'
@@ -71,7 +71,7 @@ export default function Profile() {
 
           <button
             onClick={() => setActiveTab('watchLater')}
-            className={`pb-2 text-lg font-medium relative transition-all duration-200 ${
+            className={`pb-2 text-lg font-medium relative ${
               activeTab === 'watchLater'
                 ? 'text-amber-600 after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-full after:bg-amber-600'
                 : 'text-gray-500 hover:text-gray-700'

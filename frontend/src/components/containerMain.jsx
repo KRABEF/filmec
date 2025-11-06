@@ -8,15 +8,15 @@ export const ContainerMain = ({ movies }) => {
         {movies.map((movie) => (
           <div
             key={movie.id}
-            className="flex flex-col dark:bg-neutral-900 bg-neutral-200 rounded-xl dark:shadow-xl shadow-lg hover:shadow-orange-500/10 transition-all duration-300 p-3 group"
+            className="flex flex-col dark:bg-neutral-900 bg-neutral-200 rounded-xl dark:shadow-xl shadow-lg hover:shadow-orange-500/10 p-3 group"
           >
             <div className="relative mb-3" onClick={() => navigate(`/movie/${movie.id}`)}>
               <img
                 src={movie.poster}
                 alt={movie.name}
-                className="w-full h-90 object-cover rounded-lg transition-transform duration-500"
+                className="w-full h-90 object-cover rounded-lg"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent opacity-0 group-hover:opacity-80 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent opacity-0 group-hover:opacity-80" />
               <div className="absolute top-3 right-3 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-lg select-none">
                 {movie.rating}
               </div>
@@ -26,7 +26,7 @@ export const ContainerMain = ({ movies }) => {
             </div>
 
             <div className="cursor-pointer" onClick={() => navigate(`/movie/${movie.id}`)}>
-              <h2 className="text-lg font-bold group-hover:text-orange-400 transition-colors duration-300 line-clamp-2">
+              <h2 className="text-lg font-bold group-hover:text-orange-600 line-clamp-2">
                 {movie.name}
               </h2>
             </div>

@@ -27,7 +27,7 @@ export const CommentsFilm = () => {
                     <button
                       key={star}
                       onClick={() => setRating(star)}
-                      className={`flex items-center justify-center text-sm font-semibold transition-all ${
+                      className={`flex items-center justify-center text-sm font-semibold ${
                         rating >= star
                           ? 'text-orange-600'
                           : 'dark:text-neutral-500 text-neutral-300 hover:text-orange-600'
@@ -78,14 +78,14 @@ export const CommentsFilm = () => {
         <div className="w-fit mt-3 flex gap-2">
           <button
             onClick={handleSubmit}
-            className="bg-orange-600 text-neutral-200  py-2 px-4 rounded-lg hover:bg-orange-700 hover:text-white active:scale-95 transition-all duration-100 shadow-lg"
+            className="bg-orange-600 text-neutral-200  py-2 px-4 rounded-lg hover:bg-orange-700 hover:text-white active:scale-95 shadow-lg"
           >
             Сохранить
           </button>
           {true && (
             <button
               onClick={handleSubmit}
-              className="dark:bg-neutral-900/60 bg-neutral-300 dark:text-neutral-400 text-neutral-700  py-2 px-4 rounded-lg hover:bg-neutral-900 hover:text-white active:scale-95 transition-all duration-100 shadow-lg"
+              className="dark:bg-neutral-900/60 bg-neutral-300 dark:text-neutral-400 text-neutral-700  py-2 px-4 rounded-lg hover:bg-neutral-900 hover:text-white active:scale-95 shadow-lg"
             >
               Удалить
             </button>
