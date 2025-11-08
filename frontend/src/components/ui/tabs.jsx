@@ -22,7 +22,7 @@ export const Tabs = {
 
     return (
       <button
-        className={`py-2 px-3 cursor-pointer relative transition-all duration-100 ${
+        className={`py-2 px-3 cursor-pointer relative ${
           isActive ? 'text-white' : 'text-neutral-400 '
         }`}
         onClick={() => setActiveValue(value)}

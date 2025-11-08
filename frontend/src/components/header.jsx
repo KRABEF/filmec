@@ -4,6 +4,7 @@ import { Avatar } from './ui/avatar';
 import { DropDowmMenu } from './ui/dropDowmMenu';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/button';
+import { ThemeToggle } from './ui/themeSwitch';
 
 export const Header = () => {
   const { user, logout } = useAuth();
@@ -27,42 +28,44 @@ export const Header = () => {
         <div onClick={() => navigate('/')} className="cursor-pointer">
           <img className="w-20" src="/logo.svg" alt="logo" />
         </div>
-
-        <div className="text-neutral-300 relative" ref={menuRef}>
-          {user ? (
-            <>
-              <div
-                className="flex gap-2 items-center select-none cursor-pointer"
-                onClick={() => setIsOpen((prev) => !prev)}
-              >
-                <Avatar src={user.avatar} alt={user.name || user.email} />
-                <p>{user.email}</p>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="10"
-                  height="10"
-                  fill="currentColor"
-                  className={`text-neutral-100 ${isOpen && 'rotate-180'} duration-100`}
-                  viewBox="0 0 16 16"
+        <div className="flex items-center gap-4">
+          <div className="text-neutral-300 relative " ref={menuRef}>
+            {user ? (
+              <>
+                <div
+                  className="flex gap-2 items-center select-none cursor-pointer"
+                  onClick={() => setIsOpen((prev) => !prev)}
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"
+                  <Avatar src={user.avatar} alt={user.name || user.email} />
+                  <p>{user.email}</p>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="10"
+                    height="10"
+                    fill="currentColor"
+                    className={`text-neutral-100 ${isOpen && 'rotate-180'} duration-100`}
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"
+                    />
+                  </svg>
+                </div>
+                {isOpen && (
+                  <DropDowmMenu
+                    items={[
+                      { name: 'Профиль', onClick: () => navigate('/profile') },
+                      { name: 'Выйти', onClick: logout },
+                    ]}
                   />
-                </svg>
-              </div>
-              {isOpen && (
-                <DropDowmMenu
-                  items={[
-                    { name: 'Профиль', onClick: () => navigate('/profile') },
-                    { name: 'Выйти', onClick: logout },
-                  ]}
-                />
-              )}
-            </>
-          ) : (
-            <Button onClick={() => navigate('/login')}>Войти</Button>
-          )}
+                )}
+              </>
+            ) : (
+              <Button onClick={() => navigate('/login')} className='px-2 py-1'>Войти</Button>
+            )}
+          </div>
+          <ThemeToggle />
         </div>
       </div>
     </div>
