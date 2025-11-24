@@ -9,12 +9,12 @@ async function create(req, res) {
   try {
     const { login, email, password } = req.body;
     if (!login || !email || !password) {
-      return res.status(400).json({ success: false, error: 'login, email and password required' });
+      return res.status(400).json({ success: false, error: 'требуется: логин, почта и пароль' });
     }
 
     const existing = await usersModel.findByLoginOrEmailExact(login, email);
     if (existing.length > 0) {
-      return res.status(400).json({ success: false, error: 'Login or email already exists' });
+      return res.status(400).json({ success: false, error: 'логин или пароль уже существует' });
     }
 
     const hashed = await bcrypt.hash(password, SALT_ROUNDS);
@@ -22,7 +22,7 @@ async function create(req, res) {
     return res.status(201).json({ success: true, user });
   } catch (err) {
     console.error('create controller error:', err);
-    return res.status(500).json({ success: false, error: 'Internal server error' });
+    return res.status(500).json({ success: false, error: 'Внутренняя ошибка сервера' });
   }
 }
 
@@ -32,7 +32,7 @@ async function selectAll(req, res) {
     return res.json({ success: true, users });
   } catch (err) {
     console.error('selectAll error:', err);
-    return res.status(500).json({ success: false, error: 'Internal server error' });
+    return res.status(500).json({ success: false, error: 'Внутренняя ошибка сервера' });
   }
 }
 
@@ -41,12 +41,12 @@ async function getById(req, res) {
     const userId = req.params.id;
     const user = await usersModel.findById(userId);
     if (!user) {
-      return res.status(404).json({ success: false, error: 'User not found' });
+      return res.status(404).json({ success: false, error: 'Пользователь не найден' });
     }
     return res.json({ success: true, user });
   } catch (err) {
     console.error('getById error:', err);
-    return res.status(500).json({ success: false, error: 'Internal server error' });
+    return res.status(500).json({ success: false, error: 'Внутренняя ошибка сервера' });
   }
 }
 
@@ -55,12 +55,12 @@ async function removeById(req, res) {
     const userId = req.params.id;
     const deleted = await usersModel.deleteById(userId);
     if (!deleted) {
-      return res.status(404).json({ success: false, error: 'User not found' });
+      return res.status(404).json({ success: false, error: 'Пользователь не найден' });
     }
     return res.json({ success: true, message: 'User deleted', deletedUser: deleted });
   } catch (err) {
     console.error('removeById error:', err);
-    return res.status(500).json({ success: false, error: 'Internal server error' });
+    return res.status(500).json({ success: false, error: 'Внутренняя ошибка сервера' });
   }
 }
 
@@ -68,19 +68,19 @@ async function login(req, res) {
   try {
     const { login, password } = req.body;
     if (!login || !password) {
-      return res.status(400).json({ success: false, error: 'Login and password required' });
+      return res.status(400).json({ success: false, error: 'Требуется логин и пароль' });
     }
 
     const rows = await usersModel.findByLoginOrEmail(login);
     if (!rows || rows.length === 0) {
-      return res.status(401).json({ success: false, error: 'User not found' });
+      return res.status(401).json({ success: false, error: 'Пользователь не найден' });
     }
 
     const user = rows[0];
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return res.status(401).json({ success: false, error: 'Invalid password' });
+      return res.status(401).json({ success: false, error: 'Неверный пароль' });
     }
 
     const payload = {
@@ -109,7 +109,7 @@ async function login(req, res) {
 
   } catch (err) {
     console.error('login controller error:', err);
-    return res.status(500).json({ success: false, error: 'Internal server error' });
+    return res.status(500).json({ success: false, error: 'Внутренняя ошибка сервера' });
   }
 }
 
@@ -117,7 +117,7 @@ async function login(req, res) {
 async function update(req, res) {
   try {
     const userId = req.params.id;
-    if (!userId) return res.status(400).json({ success: false, error: 'User id required' });
+    if (!userId) return res.status(400).json({ success: false, error: 'Требуется id пользователя' });
 
     const { login, email, password, photo } = req.body;
     const photoFile = req.file; 
@@ -125,7 +125,7 @@ async function update(req, res) {
     if (login || email) {
       const conflict = await usersModel.findByLoginOrEmailExcludeId(login || null, email || null, userId);
       if (conflict && conflict.length > 0) {
-        return res.status(400).json({ success: false, error: 'Login or email already in use by another user' });
+        return res.status(400).json({ success: false, error: 'Логин или почта уже используются другим пользователем' });
       }
     }
 
@@ -148,7 +148,7 @@ async function update(req, res) {
     }
 
     const updated = await usersModel.updateUser(userId, updates);
-    if (!updated) return res.status(404).json({ success: false, error: 'User not found' });
+    if (!updated) return res.status(404).json({ success: false, error: 'Пользователь не найден' });
 
     const publicUser = {
       id: updated.id,
@@ -161,7 +161,7 @@ async function update(req, res) {
     return res.json({ success: true, user: publicUser });
   } catch (err) {
     console.error('update controller error:', err);
-    return res.status(500).json({ success: false, error: 'Internal server error' });
+    return res.status(500).json({ success: false, error: 'Внутренняя ошибка сервера' });
   }
 }
 
