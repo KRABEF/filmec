@@ -28,3 +28,6 @@ dist-ssr
 
 *.dump
 data
+
+repl.js
+test-db.js
