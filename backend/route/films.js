@@ -1,5 +1,8 @@
 const express = require('express');
+const router = express.Router();
+const filmsController = require('../controllers/index.js');
 
-const app = express();
+// Эндпоинт: GET /api/films
+router.get('/', filmsController.getFilms);
 
-app.use(express.json());
+module.exports = router;
