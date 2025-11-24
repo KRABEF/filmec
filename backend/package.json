@@ -1,22 +1,27 @@
 {
-	"name": "filmecbackend",
-	"version": "1.0.0",
-	"description": "",
-	"main": "main.js",
-	"scripts": {
-		"start": "node root/main.js",
-		"dev": "node root/main.js"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"type": "commonjs",
-	"devDependencies": {
-		"prettier": "^3.6.2"
-	},
-	"dependencies": {
-		"dotenv": "^17.2.2",
-		"express": "^5.1.0",
-		"pg": "^8.16.3"
-	}
+  "name": "filmecbackend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node root/main.js",
+    "dev": "node root/main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "pg": "^8.16.3",
+    "postgres": "^3.4.7"
+  }
 }
