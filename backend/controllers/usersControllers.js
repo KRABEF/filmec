@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const usersModel = require('../../models/users/usersModel');
+const usersModel = require('../models/usersRequests');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES = process.env.JWT_EXPIRES || '8h';
@@ -86,33 +86,31 @@ async function login(req, res) {
     const payload = {
       id: user.id,
       login: user.login,
-      role: user.role || 'user'
+      role: user.role || 'user',
     };
 
     const token = jwt.sign(payload, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES
+      expiresIn: JWT_EXPIRES,
     });
 
     const publicUser = {
       id: user.id,
       login: user.login,
       email: user.email,
-      role: payload.role
+      role: payload.role,
     };
 
     return res.json({
       success: true,
       message: 'Login successful',
       token,
-      user: publicUser
+      user: publicUser,
     });
-
   } catch (err) {
     console.error('login controller error:', err);
     return res.status(500).json({ success: false, error: 'Internal server error' });
   }
 }
-
 
 async function update(req, res) {
   try {
@@ -120,12 +118,18 @@ async function update(req, res) {
     if (!userId) return res.status(400).json({ success: false, error: 'User id required' });
 
     const { login, email, password, photo } = req.body;
-    const photoFile = req.file; 
+    const photoFile = req.file;
 
     if (login || email) {
-      const conflict = await usersModel.findByLoginOrEmailExcludeId(login || null, email || null, userId);
+      const conflict = await usersModel.findByLoginOrEmailExcludeId(
+        login || null,
+        email || null,
+        userId,
+      );
       if (conflict && conflict.length > 0) {
-        return res.status(400).json({ success: false, error: 'Login or email already in use by another user' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'Login or email already in use by another user' });
       }
     }
 
@@ -155,7 +159,7 @@ async function update(req, res) {
       login: updated.login,
       email: updated.email,
       registration_date: updated.registration_date,
-      photo: updated.photo || null
+      photo: updated.photo || null,
     };
 
     return res.json({ success: true, user: publicUser });
