@@ -144,7 +144,7 @@ async function update(req, res) {
     }
 
     if (Object.keys(updates).length === 0) {
-      return res.status(400).json({ success: false, error: 'No fields to update' });
+      return res.status(400).json({ success: false, error: 'Нет полей для обновления' });
     }
 
     const updated = await usersModel.updateUser(userId, updates);
