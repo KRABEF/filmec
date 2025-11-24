@@ -4,7 +4,7 @@ import { LeftMenu } from '../components/leftMenu';
 export default function App() {
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex flex-grow py-3">
+      <main className="flex flex-grow ">
         <div className="relative top-0 lg:p-4">
           <LeftMenu />
         </div>

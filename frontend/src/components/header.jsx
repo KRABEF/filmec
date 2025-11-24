@@ -2,12 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar } from './ui/avatar';
 import { DropDowmMenu } from './ui/dropDowmMenu';
-import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/button';
 import { ThemeToggle } from './ui/themeSwitch';
+import { useAuthContext } from '../context/AuthContext';
 
 export const Header = () => {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuthContext();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
@@ -56,13 +56,21 @@ export const Header = () => {
                   <DropDowmMenu
                     items={[
                       { name: 'Профиль', onClick: () => navigate('/profile') },
-                      { name: 'Выйти', onClick: logout },
+                      {
+                        name: 'Выйти',
+                        onClick: () => {
+                          navigate('/');
+                          logout();
+                        },
+                      },
                     ]}
                   />
                 )}
               </>
             ) : (
-              <Button onClick={() => navigate('/login')} className='px-2 py-1'>Войти</Button>
+              <Button onClick={() => navigate('/login')} className="px-2 py-1">
+                Войти
+              </Button>
             )}
           </div>
           <ThemeToggle />

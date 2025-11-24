@@ -48,7 +48,6 @@ export function ThemeToggle() {
               width="16"
               height="16"
               fill="currentColor"
-              class="bi bi-moon"
               viewBox="0 0 16 16"
               className="text-orange-200 transition-all duration-500"
             >
@@ -60,7 +59,6 @@ export function ThemeToggle() {
               width="16"
               height="16"
               fill="currentColor"
-              class="bi bi-brightness-high"
               viewBox="0 0 16 16"
               className="text-orange-900 transition-all duration-500"
             >
