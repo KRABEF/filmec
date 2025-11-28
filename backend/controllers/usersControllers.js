@@ -19,7 +19,26 @@ async function create(req, res) {
 
     const hashed = await bcrypt.hash(password, SALT_ROUNDS);
     const user = await usersModel.createUser(login, email, hashed);
-    return res.status(201).json({ success: true, user });
+
+     const payload = {
+      id: user.id,
+      login: user.login,
+      role: user.role || 'user'
+    };
+
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES })
+
+    return res.status(201).json({
+      success: true,
+      message: 'User created',
+      token, 
+      user: {
+        id: user.id,
+        login: user.login,
+        email: user.email,
+        role: payload.role
+      }
+    });
   } catch (err) {
     console.error('create controller error:', err);
     return res.status(500).json({ success: false, error: 'Внутренняя ошибка сервера' });
@@ -165,7 +184,7 @@ async function update(req, res) {
     return res.json({ success: true, user: publicUser });
   } catch (err) {
     console.error('update controller error:', err);
-    return res.status(500).json({ success: false, error: 'Внутренняя ошибка сервераcd' });
+    return res.status(500).json({ success: false, error: 'Внутренняя ошибка сервера' });
   }
 }
 
