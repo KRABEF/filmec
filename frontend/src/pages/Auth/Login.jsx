@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useAuthContext } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     password: '',
     login: '',
@@ -13,6 +15,7 @@ export const Login = () => {
     e.preventDefault();
 
     await login(formData);
+    navigate('/profile');
   };
 
   return (

@@ -2,9 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar } from './ui/avatar';
 import { DropDowmMenu } from './ui/dropDowmMenu';
-import { Button } from './ui/button';
 import { ThemeToggle } from './ui/themeSwitch';
 import { useAuthContext } from '../context/AuthContext';
+import { ButtonSmall } from './ui/ButtonSmall';
 
 export const Header = () => {
   const { user, logout } = useAuthContext();
@@ -68,9 +68,14 @@ export const Header = () => {
                 )}
               </>
             ) : (
-              <Button onClick={() => navigate('/login')} className="px-2 py-1">
-                Войти
-              </Button>
+              <div className="flex gap-1">
+                <ButtonSmall onClick={() => navigate('/login')} variant="ghost">
+                  Войти
+                </ButtonSmall>
+                <ButtonSmall onClick={() => navigate('/register')} variant="outline" className='lg:block hidden'>
+                  Зарегистрироваться
+                </ButtonSmall>
+              </div>
             )}
           </div>
           <ThemeToggle />
