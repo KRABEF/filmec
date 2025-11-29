@@ -10,7 +10,7 @@ export const CommentsFilm = () => {
   return (
     <div className="relative">
       <div className="mb-7">
-        <h3 className="text-2xl font-bold flex items-center gap-2">Твой отзыв на фильм</h3>
+        <h3 className="text-3xl font-bold flex items-center gap-2">Твой отзыв на фильм</h3>
         <p className="text-neutral-400 mt-1">
           Здесь пишешь только ты, никто другой не увидит — так что выкладывайся на полную и не
           стесняйся!

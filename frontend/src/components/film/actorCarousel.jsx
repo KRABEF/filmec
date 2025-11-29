@@ -45,7 +45,7 @@ export const ActorCarousel = ({ actors }) => {
 
   return (
     <div className="relative">
-      <h3 className="text-2xl font-bold flex items-center gap-2 mb-7">Режиссёры и актёры</h3>
+      <h3 className="text-3xl font-bold flex items-center gap-2 mb-7">Режиссёры и актёры</h3>
       <div className="slider-container relative mx-18">
         <Slider {...settings}>
           {actors.map((actor) => (

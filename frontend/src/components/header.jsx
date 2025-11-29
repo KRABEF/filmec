@@ -4,7 +4,7 @@ import { Avatar } from './ui/avatar';
 import { DropDowmMenu } from './ui/dropDowmMenu';
 import { ThemeToggle } from './ui/themeSwitch';
 import { useAuthContext } from '../context/AuthContext';
-import { ButtonSmall } from './ui/ButtonSmall';
+import { ButtonSmall } from './ui/buttonSmall';
 
 export const Header = () => {
   const { user, logout } = useAuthContext();
@@ -24,7 +24,7 @@ export const Header = () => {
 
   return (
     <div className="p-2 bg-neutral-900 shadow-xl">
-      <div className="flex justify-between items-center m-auto container">
+      <div className="flex justify-between items-center max-w-6xl mx-auto">
         <div onClick={() => navigate('/')} className="cursor-pointer">
           <img className="w-20" src="/logo.svg" alt="logo" />
         </div>
