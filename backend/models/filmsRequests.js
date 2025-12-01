@@ -127,4 +127,88 @@ module.exports = {
     const result = await pool.query(sql, params);
     return result.rows;
   },
+
+  // === Получить полную информацию о фильме ===
+  getFullMovieById: async (id) => {
+    // === Основная информация о фильме ===
+    const movieQuery = `
+      SELECT
+        m.id,
+        m.name,
+        m.release_date,
+        m.duration_movie,
+        m.cover,
+        m.description,
+        m.id_imdb,
+        ar.rating AS age_rating
+      FROM movie m
+      LEFT JOIN age_rating ar ON m.id_age_rating = ar.id
+      WHERE m.id = $1
+    `;
+    const movieResult = await pool.query(movieQuery, [id]);
+    const movie = movieResult.rows[0];
+    if (!movie) return null;
+
+    // === Жанры ===
+    const genresResult = await pool.query(
+      `
+      SELECT g.genres AS genre
+      FROM movies_genres mg
+      JOIN genre g ON mg.id_genres = g.id
+      WHERE mg.id_movies = $1
+    `,
+      [id],
+    );
+    movie.genres = genresResult.rows.map((r) => r.genre);
+
+    // === Актёры ===
+    const actorsResult = await pool.query(
+      `
+      SELECT a.name, a.surname, a.photo
+      FROM casting c
+      JOIN actor a ON c.id_actor = a.id
+      WHERE c.id_movie = $1
+    `,
+      [id],
+    );
+    movie.actors = actorsResult.rows;
+
+    // === Режиссёры ===
+    const directorsResult = await pool.query(
+      `
+      SELECT d.name, d.surname, d.photo
+      FROM director_movie dm
+      JOIN director d ON dm.id_director = d.id
+      WHERE dm.id_movie = $1
+    `,
+      [id],
+    );
+    movie.directors = directorsResult.rows;
+
+    // === Страны ===
+    const countriesResult = await pool.query(
+      `
+      SELECT c.country
+      FROM movie_country mc
+      JOIN countries c ON mc.id_country = c.id
+      WHERE mc.id_movie = $1
+    `,
+      [id],
+    );
+    movie.countries = countriesResult.rows.map((r) => r.country);
+
+    // === Дистрибьюторы ===
+    const distributorsResult = await pool.query(
+      `
+      SELECT ft.name AS distributor
+      FROM film_tutor_countries_movie ftcm
+      JOIN film_tutor ft ON ftcm.id_film_tutor = ft.id
+      WHERE ftcm.id_movie = $1
+    `,
+      [id],
+    );
+    movie.distributors = distributorsResult.rows.map((r) => r.distributor);
+
+    return movie;
+  },
 };

@@ -1,5 +1,7 @@
-require('dotenv').config();
 const path = require('path');
+
+require('dotenv').config({ path: './root/.env' });
+
 const express = require('express');
 const cors = require('cors');
 const requestLogger = require('../middlewares/requestLogger.js');
