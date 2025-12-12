@@ -36,6 +36,6 @@ router.post(
   upload.single('photo'),
   usersController.update,
 );
-router.delete('/delete/:id', authenticateToken, requireAdmin, usersController.removeById);
+router.delete('/delete/:id', authenticateToken, usersController.removeById);
 
 module.exports = router;
