@@ -274,7 +274,7 @@ export const LeftMenu = ({ onFiltersChange }) => {
       </div>
 
       {/* Десктопная версия (оригинальная) */}
-      <div className="hidden  shadow-lg lg:block w-80 dark:bg-neutral-900 bg-neutral-50 rounded-lg p-6">
+      <div className="hidden  shadow-xs lg:block w-80 dark:bg-neutral-900 bg-white rounded-lg p-6">
         {/* Оригинальный код десктопной версии */}
         <div className="mb-6">
           <button

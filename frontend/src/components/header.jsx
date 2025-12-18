@@ -5,6 +5,7 @@ import { DropDowmMenu } from './ui/dropDowmMenu';
 import { ThemeToggle } from './ui/themeSwitch';
 import { useAuthContext } from '../context/AuthContext';
 import { ButtonSmall } from './ui/buttonSmall';
+import { Button } from './ui/button';
 
 export const Header = () => {
   const { user, logout } = useAuthContext();
@@ -72,9 +73,9 @@ export const Header = () => {
                 <ButtonSmall onClick={() => navigate('/login')} variant="ghost">
                   Войти
                 </ButtonSmall>
-                <ButtonSmall onClick={() => navigate('/register')} variant="outline" className='lg:block hidden'>
+                <Button onClick={() => navigate('/register')} variant="outline" className='lg:block hidden'>
                   Зарегистрироваться
-                </ButtonSmall>
+                </Button>
               </div>
             )}
           </div>

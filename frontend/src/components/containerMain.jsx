@@ -32,7 +32,7 @@ export const ContainerMain = ({ movies }) => {
             </div>
 
             <div className="flex justify-between items-center">
-              <p className="text-neutral-400 text-sm">
+              <p className="text-neutral-500 text-sm">
                 {movie.release_date}, {movie.genres[0]}
               </p>
             </div>
