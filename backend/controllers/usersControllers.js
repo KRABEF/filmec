@@ -71,11 +71,24 @@ async function getById(req, res) {
 
 async function removeById(req, res) {
   try {
-    const userId = req.params.id;
+    const userId = String(req.params.id);
+
+    if (!req.user) {
+      return res.status(401).json({ success: false, error: 'Не аутентифицирован' });
+    }
+
+    const isAdmin = String(req.user.role) === 'admin';
+    const isOwner = String(req.user.id) === userId;
+
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({ success: false, error: 'Forbidden' });
+    }
+
     const deleted = await usersModel.deleteById(userId);
     if (!deleted) {
       return res.status(404).json({ success: false, error: 'Пользователь не найден' });
     }
+
     return res.json({ success: true, message: 'User deleted', deletedUser: deleted });
   } catch (err) {
     console.error('removeById error:', err);

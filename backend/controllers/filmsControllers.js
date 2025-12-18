@@ -47,4 +47,15 @@ module.exports = {
       res.status(500).json({ error: 'Не удалось получить фильмы' });
     }
   },
+
+  getFullMovieById: async (req, res) => {
+    try {
+      const movie = await filmsModel.getFullMovieById(req.params.id);
+      if (!movie) return res.status(404).json({ error: 'Фильм не найден' });
+      res.json(movie);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Не удалось получить данные фильма' });
+    }
+  },
 };
