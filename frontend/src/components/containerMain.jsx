@@ -8,9 +8,9 @@ export const ContainerMain = ({ movies }) => {
         {movies.map((movie) => (
           <div
             key={movie.id}
-            className="flex flex-col dark:bg-neutral-900 bg-neutral-50 rounded-xl hover:shadow-2xl shadow-lg hover:shadow-orange-500/30 p-3 group"
+            className="flex flex-col dark:bg-neutral-900 bg-neutral-50 rounded-xl hover:shadow-2xl shadow-lg hover:shadow-neutral-500/30 p-3 group"
           >
-            <div className="relative mb-3" onClick={() => navigate(`/movie/${movie.id}`)}>
+            <div className="relative mb-1" onClick={() => navigate(`/movie/${movie.id}`)}>
               <img
                 src={movie.poster}
                 alt={movie.name}
@@ -26,13 +26,13 @@ export const ContainerMain = ({ movies }) => {
             </div>
 
             <div className="cursor-pointer" onClick={() => navigate(`/movie/${movie.id}`)}>
-              <h2 className="text-lg font-bold  line-clamp-2">
+              <h2 className="text-lg font-bold  line-clamp-2 group-hover:text-orange-600">
                 {movie.name}
               </h2>
             </div>
 
             <div className="flex justify-between items-center">
-              <p className="text-neutral-400 text-sm">
+              <p className="text-neutral-500 text-sm">
                 {movie.release_date}, {movie.genres[0]}
               </p>
             </div>

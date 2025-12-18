@@ -30,7 +30,7 @@ export const FilmDetailPage = () => {
 
   return (
     <ScrollContainer>
-      <div className="max-w-6xl mx-auto py-6 flex flex-col gap-10 px-4">
+      <div className="max-w-6xl mx-auto py-6 space-y-20 px-4">
         <FilmCard film={film} />
         <ActorCarousel actors={actors} />
         <CommentsFilm />

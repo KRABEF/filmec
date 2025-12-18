@@ -10,8 +10,8 @@ export const CommentsFilm = () => {
   return (
     <div className="relative">
       <div className="mb-7">
-        <h3 className="text-2xl font-bold flex items-center gap-2">Твой отзыв на фильм</h3>
-        <p className="text-neutral-400 mt-1">
+        <h3 className="text-3xl font-bold flex items-center gap-2">Твой отзыв на фильм</h3>
+        <p className="text-neutral-600 dark:text-neutral-300 mt-1">
           Здесь пишешь только ты, никто другой не увидит — так что выкладывайся на полную и не
           стесняйся!
         </p>
@@ -55,12 +55,12 @@ export const CommentsFilm = () => {
                   ))}
                 </div>
 
-                <div className="lg:flex hidden justify-between text-neutral-600 text-sm">
+                <div className="lg:flex hidden justify-between text-neutral-500 text-sm">
                   <p>Худшая оценка</p>
                   <p>Лучшая оценка</p>
                 </div>
               </div>
-              <div className="lg:flex hidden items-center justify-center gap-3 dark:bg-neutral-900/50 bg-neutral-200/50 rounded-xl p-4 w-[80px] h-[80px] shadow-lg">
+              <div className="lg:flex hidden items-center justify-center gap-3 dark:bg-neutral-900/50 bg-neutral-300/50 rounded-xl p-4 w-[80px] h-[80px] shadow-sm">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-orange-500">0</div>
                 </div>

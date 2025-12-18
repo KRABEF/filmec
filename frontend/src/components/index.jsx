@@ -7,3 +7,4 @@ export { CommentsFilm } from './film/commentsFilm';
 export { FilmCard } from './film/filmCard';
 export { Tabs } from './ui/tabs';
 export { ThemeToggle } from './ui/themeSwitch';
+export { ButtonSmall } from './ui/buttonSmall';

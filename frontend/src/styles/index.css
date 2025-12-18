@@ -3,7 +3,7 @@
 
 body {
   overflow: hidden;
-  @apply bg-neutral-200/50 text-black;
+  @apply bg-neutral-200/80 text-black;
   @apply dark:bg-neutral-800 dark:text-white;
 }
 
