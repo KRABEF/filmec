@@ -1,14 +1,14 @@
 import { DELETE, GET, POST } from './client';
 
-const endpoint = 'api/users/';
+const endpoint = 'api/';
 
 // /create - создание пользователя (почта пароль логин)
-export const userCreate = async (data) => {
+export const getGenres = async () => {
   try {
-    const response = await POST(`${endpoint}create`, data);
+    const response = await GET(`${endpoint}genres`);
     return response.data;
   } catch (err) {
-    console.error('Error in userCreate:', err);
+    console.error('Error in getGenres:', err);
     throw err;
   }
 };
@@ -74,6 +74,28 @@ export const getFilms = async (id) => {
     return response.data;
   } catch (err) {
     console.error('Error in userDelete:', err);
+    throw err;
+  }
+};
+
+// Получение всех возрастных рейтингов (без ID)
+export const getAgeRatings = async () => {
+  try {
+    const response = await GET(`${endpoint}age-ratings`);
+    return response.data;
+  } catch (err) {
+    console.error('Error in getAgeRatings:', err);
+    throw err;
+  }
+};
+
+// Получение конкретного возрастного рейтинга по ID (если нужно)
+export const getAgeRatingById = async (id) => {
+  try {
+    const response = await GET(`${endpoint}age-ratings/${id}`);
+    return response.data;
+  } catch (err) {
+    console.error('Error in getAgeRatingById:', err);
     throw err;
   }
 };

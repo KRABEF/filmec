@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../components/ui/button';
+import { useFilms } from '../hooks/useFilms';
+import { useAgeRatings } from '../hooks/useAgeRatings';
 
 export const LeftMenu = ({ onFiltersChange }) => {
-  const genres = [
-    'Биография',
-    'Боевик',
-    'Вестерн',
-    'Детектив',
-    'Для всей семьи',
-    'Для детей',
-    'Документальные',
-  ];
+  const { allGenres, genres_name } = useFilms();
+  const { fetchAgeRatings, ageRatingsList } = useAgeRatings();
 
-  const ageRatings = ['0+', '6+', '12+', '18+'];
+  useEffect(() => {
+    allGenres();
+    fetchAgeRatings();
+  }, []);
+
   const currentYear = new Date().getFullYear();
 
   const [filters, setFilters] = useState({
@@ -137,7 +136,7 @@ export const LeftMenu = ({ onFiltersChange }) => {
 
           {isGenresOpen && (
             <div className="mt-2 space-y-3 pl-2">
-              {genres.map((genre) => (
+              {genres_name.map((genre) => (
                 <label key={genre} className="flex items-center space-x-3 cursor-pointer py-2">
                   <input
                     type="checkbox"
@@ -145,7 +144,9 @@ export const LeftMenu = ({ onFiltersChange }) => {
                     onChange={() => handleGenreToggle(genre)}
                     className="w-5 h-5 accent-orange-500"
                   />
-                  <span className="text-neutral-300 hover:text-white text-base">{genre}</span>
+                  <span className="text-neutral-300 hover:text-white text-base">
+                    {typeof genre === 'object' ? genre.genres : genre}
+                  </span>
                 </label>
               ))}
             </div>
@@ -212,17 +213,25 @@ export const LeftMenu = ({ onFiltersChange }) => {
 
           {isAgeRatingOpen && (
             <div className="grid grid-cols-2 gap-3 mt-2 pl-2">
-              {ageRatings.map((rating) => (
-                <label key={rating} className="flex items-center space-x-3 cursor-pointer py-2">
-                  <input
-                    type="checkbox"
-                    checked={filters.ageRating.includes(rating)}
-                    onChange={() => handleAgeRatingToggle(rating)}
-                    className="w-5 h-5 accent-orange-500"
-                  />
-                  <span className="text-neutral-300 text-base">{rating}</span>
-                </label>
-              ))}
+              {ageRatingsList.map((rating) => {
+                const ratingValue = typeof rating === 'object' 
+                  ? (rating.name || rating.rating || rating.value)
+                  : rating;
+                  
+                return (
+                  <label key={ratingValue} className="flex items-center space-x-3 cursor-pointer py-2">
+                    <input
+                      type="checkbox"
+                      checked={filters.ageRating.includes(ratingValue)}
+                      onChange={() => handleAgeRatingToggle(ratingValue)}
+                      className="w-5 h-5 accent-orange-500"
+                    />
+                    <span className="text-neutral-300 text-base">
+                      {ratingValue}
+                    </span>
+                  </label>
+                );
+              })}
             </div>
           )}
         </div>
@@ -273,104 +282,138 @@ export const LeftMenu = ({ onFiltersChange }) => {
         </div>
       </div>
 
-      {/* Десктопная версия (оригинальная) */}
-      <div className="hidden  shadow-xs lg:block w-80 dark:bg-neutral-900 bg-white rounded-lg p-6">
-        {/* Оригинальный код десктопной версии */}
-        <div className="mb-6">
-          <button
-            onClick={() => setIsGenresOpen(!isGenresOpen)}
-            className="flex justify-between items-center w-full text-left"
-          >
-            <h2 className="text-xl font-bold">Жанры</h2>
-            <span className="text-neutral-400">{isGenresOpen ? '−' : '+'}</span>
-          </button>
+      {/* Обертка для скролла */}
+      <div className="hidden shadow-xs lg:flex flex-col w-80 max-h-[calc(100vh-120px)] dark:bg-neutral-900 bg-white rounded-lg p-6">
+        {/* Десктопная версия (оригинальная) */}
+        <div className="flex-1 min-h-0 overflow-y-auto pr-2 mb-4">
+          {/* Секция жанров */}
+          <div className="mb-6">
+            <button
+              onClick={() => setIsGenresOpen(!isGenresOpen)}
+              className="flex justify-between items-center w-full text-left hover:bg-transparent focus:outline-none"
+            >
+              <h2 className="text-xl font-bold dark:text-white text-neutral-900">Жанры</h2>
+              <span className="text-neutral-400">{isGenresOpen ? '−' : '+'}</span>
+            </button>
 
-          {isGenresOpen && (
-            <div className="mt-4 space-y-2">
-              {genres.map((genre) => (
-                <label key={genre} className="flex items-center space-x-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={filters.genres.includes(genre)}
-                    onChange={() => handleGenreToggle(genre)}
-                    className="w-4 h-4 accent-orange-500"
-                  />
-                  <span className="text-neutral-800 hover:text-black dark:text-neutral-300 dark:hover:text-white">
-                    {genre}
+            {isGenresOpen && (
+              <div className="mt-4 space-y-2">
+                {genres_name.map((genre) => (
+                  <label
+                    key={genre}
+                    className="flex items-center space-x-3 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 px-2 py-1 rounded transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={filters.genres.includes(genre)}
+                      onChange={() => handleGenreToggle(genre)}
+                      className="w-4 h-4 accent-orange-500"
+                    />
+                    <span className="text-neutral-800 hover:text-black dark:text-neutral-300 dark:hover:text-white">
+                      {typeof genre === 'object' ? genre.genres : genre}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="border-t dark:border-neutral-800 border-neutral-300 my-4"></div>
+
+          {/* Рейтинг */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3 dark:text-white text-neutral-900">
+              Рейтинг от {filters.minRating}
+            </h3>
+
+            <div className="relative">
+              <input
+                type="range"
+                min="0"
+                max="9"
+                step="1"
+                value={filters.minRating}
+                onChange={(e) => handleRatingChange(parseInt(e.target.value))}
+                className="w-full h-1.5 bg-gradient-to-r from-orange-400/40 to-orange-600/40 rounded-full appearance-none cursor-pointer 
+          [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 
+          [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-orange-500 
+          [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(255,140,0,0.5)]
+          hover:[&::-webkit-slider-thumb]:scale-110 transition-transform"
+              />
+
+              <div className="flex justify-between px-1 mt-3">
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                  <span
+                    key={num}
+                    className={`text-xs ${
+                      num === filters.minRating ? 'text-orange-500 font-bold' : 'text-neutral-400'
+                    }`}
+                  >
+                    {num}
                   </span>
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="border-t dark:border-neutral-800 border-neutral-300 my-4"></div>
-
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Рейтинг от {filters.minRating}</h3>
-
-          <div className="relative">
-            <input
-              type="range"
-              min="0"
-              max="9"
-              step="1"
-              value={filters.minRating}
-              onChange={(e) => handleRatingChange(parseInt(e.target.value))}
-              className="w-full h-1.5 bg-gradient-to-r from-orange-400/40 to-orange-600/40 rounded-full appearance-none cursor-pointer 
-                 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 
-                 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-orange-500 
-                 [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(255,140,0,0.5)]
-                 "
-            />
-            <div className="flex justify-between px-1 mt-3">
-              {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-                <span
-                  key={num}
-                  className={`text-xs ${
-                    num === filters.minRating ? 'text-orange-500 font-bold' : 'text-neutral-400'
-                  }`}
-                >
-                  {num}
-                </span>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Возрастной рейтинг:</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {ageRatings.map((rating) => (
-              <label key={rating} className="flex items-center space-x-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={filters.ageRating.includes(rating)}
-                  onChange={() => handleAgeRatingToggle(rating)}
-                  className="w-4 h-4 accent-orange-500"
-                />
-                <span className="dark:text-neutral-300 text-neutral-700">{rating}</span>
-              </label>
-            ))}
+          {/* Возрастной рейтинг */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3 dark:text-white text-neutral-900">
+              Возрастной рейтинг:
+            </h3>
+
+            <div className="grid grid-cols-2 gap-2">
+              {ageRatingsList.map((rating) => {
+                const ratingValue = typeof rating === 'object' 
+                  ? (rating.name || rating.rating || rating.value)
+                  : rating;
+                  
+                return (
+                  <label
+                    key={ratingValue}
+                    className="flex items-center space-x-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 px-2 py-1 rounded transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={filters.ageRating.includes(ratingValue)}
+                      onChange={() => handleAgeRatingToggle(ratingValue)}
+                      className="w-4 h-4 accent-orange-500"
+                    />
+                    <span className="dark:text-neutral-300 text-neutral-700">
+                      {ratingValue}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold">Год выпуска от</h3>
-            <div className="flex items-center space-x-2">
+          {/* Год выпуска */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-semibold dark:text-white text-neutral-900">
+                Год выпуска от
+              </h3>
+
               <input
                 type="number"
                 value={filters.minYear}
                 onChange={handleYearInputChange}
                 min="1900"
                 max={currentYear}
-                className="w-24 px-2 py-1 bg-white dark:bg-neutral-800 border border-neutral-200/90 dark:border-neutral-900/90 rounded-lg text-neutral-800 dark:text-neutral-100 text-md 
-                   focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-xs"
+                className="w-24 px-2 py-1 bg-white dark:bg-neutral-800 border border-neutral-200/90 dark:border-neutral-900/90 rounded-lg 
+          text-neutral-800 dark:text-neutral-100 text-md 
+          focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-xs
+          hover:border-orange-400 transition-colors"
               />
             </div>
           </div>
-          <Button>Найти</Button>
+        </div>
+
+        <div className="pt-4 border-t border-neutral-300 dark:border-neutral-800">
+          <Button className="w-full rounded-lg bg-orange-500 hover:bg-orange-600 text-white py-2.5 font-medium transition-all duration-200">
+            Найти
+          </Button>
         </div>
       </div>
     </>
