@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '../components/ui/button';
 import { useFilms } from '../hooks/useFilms';
 import { useAgeRatings } from '../hooks/useAgeRatings';
+import { useCountries } from '../hooks/useCountries'; // Добавляем импорт хука стран
 
 export const LeftMenu = ({ onFiltersChange }) => {
   const { allGenres, genres_name } = useFilms();
   const { fetchAgeRatings, ageRatingsList } = useAgeRatings();
+  const { fetchCountries, countriesList } = useCountries(); // Используем хук стран
 
   useEffect(() => {
     allGenres();
     fetchAgeRatings();
+    fetchCountries(); // Получаем страны при загрузке
   }, []);
 
   const currentYear = new Date().getFullYear();
@@ -19,13 +22,49 @@ export const LeftMenu = ({ onFiltersChange }) => {
     minRating: 7,
     ageRating: [],
     minYear: 2025,
+    countryIds: [], // Изменяем название на countryIds для соответствия API
   });
 
   const [isGenresOpen, setIsGenresOpen] = useState(false);
   const [isRatingOpen, setIsRatingOpen] = useState(false);
   const [isAgeRatingOpen, setIsAgeRatingOpen] = useState(false);
   const [isYearOpen, setIsYearOpen] = useState(false);
+  const [isCountriesOpen, setIsCountriesOpen] = useState(false); // Для стран
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Вспомогательная функция для обработки стран
+  const getCountryInfo = (country) => {
+    if (Array.isArray(country) && country.length >= 3) {
+      // Формат: [195, 198, 'СССР']
+      return {
+        id: country[1], // Второй элемент - ID
+        name: country[2], // Третий элемент - название
+      };
+    }
+
+    if (typeof country === 'object') {
+      // Если объект, пробуем получить значения
+      const values = Object.values(country);
+      if (values.length >= 3 && typeof values[2] === 'string') {
+        return {
+          id: values[1], // Второе значение - ID
+          name: values[2], // Третье значение - название
+        };
+      }
+
+      // Стандартные форматы
+      return {
+        id: country.id || country.country_id,
+        name: country.name || country.country || country.value,
+      };
+    }
+
+    // Если страна пришла как строка
+    return {
+      id: country,
+      name: country,
+    };
+  };
 
   const handleGenreToggle = (genre) => {
     const newGenres = filters.genres.includes(genre)
@@ -49,6 +88,16 @@ export const LeftMenu = ({ onFiltersChange }) => {
       : [...filters.ageRating, rating];
 
     const newFilters = { ...filters, ageRating: newAgeRatings };
+    setFilters(newFilters);
+    onFiltersChange?.(newFilters);
+  };
+
+  const handleCountryToggle = (countryId) => {
+    const newCountryIds = filters.countryIds.includes(countryId)
+      ? filters.countryIds.filter((c) => c !== countryId)
+      : [...filters.countryIds, countryId];
+
+    const newFilters = { ...filters, countryIds: newCountryIds };
     setFilters(newFilters);
     onFiltersChange?.(newFilters);
   };
@@ -79,6 +128,7 @@ export const LeftMenu = ({ onFiltersChange }) => {
       minRating: 7,
       ageRating: [],
       minYear: 2025,
+      countryIds: [], // Сбрасываем страны тоже
     };
     setFilters(newFilters);
     onFiltersChange?.(newFilters);
@@ -214,20 +264,64 @@ export const LeftMenu = ({ onFiltersChange }) => {
           {isAgeRatingOpen && (
             <div className="grid grid-cols-2 gap-3 mt-2 pl-2">
               {ageRatingsList.map((rating) => {
-                const ratingValue = typeof rating === 'object' 
-                  ? (rating.name || rating.rating || rating.value)
-                  : rating;
-                  
+                const ratingValue =
+                  typeof rating === 'object'
+                    ? rating.name || rating.rating || rating.value
+                    : rating;
+
                 return (
-                  <label key={ratingValue} className="flex items-center space-x-3 cursor-pointer py-2">
+                  <label
+                    key={ratingValue}
+                    className="flex items-center space-x-3 cursor-pointer py-2"
+                  >
                     <input
                       type="checkbox"
                       checked={filters.ageRating.includes(ratingValue)}
                       onChange={() => handleAgeRatingToggle(ratingValue)}
                       className="w-5 h-5 accent-orange-500"
                     />
-                    <span className="text-neutral-300 text-base">
-                      {ratingValue}
+                    <span className="text-neutral-300 text-base">{ratingValue}</span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Секция страны */}
+        <div className="mb-6">
+          <button
+            onClick={() => setIsCountriesOpen(!isCountriesOpen)}
+            className="flex justify-between items-center w-full text-left py-3"
+          >
+            <h3 className="text-lg font-semibold text-white">Страна</h3>
+            <span className="text-neutral-400 text-xl">{isCountriesOpen ? '−' : '+'}</span>
+          </button>
+
+          {isCountriesOpen && (
+            <div className="mt-2 space-y-3 pl-2">
+              {countriesList.map((country) => {
+                // Обрабатываем данные стран аналогично возрастным рейтингам
+                const countryValue =
+                  typeof country === 'object'
+                    ? country.name || country.country || country.value
+                    : country;
+                const countryId =
+                  typeof country === 'object' ? country.id || country.country_id : country;
+
+                return (
+                  <label
+                    key={countryId}
+                    className="flex items-center space-x-3 cursor-pointer py-2"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={filters.countryIds.includes(countryId)}
+                      onChange={() => handleCountryToggle(countryId)}
+                      className="w-5 h-5 accent-orange-500"
+                    />
+                    <span className="text-neutral-300 hover:text-white text-base">
+                      {countryValue}
                     </span>
                   </label>
                 );
@@ -364,10 +458,11 @@ export const LeftMenu = ({ onFiltersChange }) => {
 
             <div className="grid grid-cols-2 gap-2">
               {ageRatingsList.map((rating) => {
-                const ratingValue = typeof rating === 'object' 
-                  ? (rating.name || rating.rating || rating.value)
-                  : rating;
-                  
+                const ratingValue =
+                  typeof rating === 'object'
+                    ? rating.name || rating.rating || rating.value
+                    : rating;
+
                 return (
                   <label
                     key={ratingValue}
@@ -379,13 +474,51 @@ export const LeftMenu = ({ onFiltersChange }) => {
                       onChange={() => handleAgeRatingToggle(ratingValue)}
                       className="w-4 h-4 accent-orange-500"
                     />
-                    <span className="dark:text-neutral-300 text-neutral-700">
-                      {ratingValue}
-                    </span>
+                    <span className="dark:text-neutral-300 text-neutral-700">{ratingValue}</span>
                   </label>
                 );
               })}
             </div>
+          </div>
+
+          {/* Страна */}
+          <div className="mb-6">
+            <button
+              onClick={() => setIsCountriesOpen(!isCountriesOpen)}
+              className="flex justify-between items-center w-full text-left hover:bg-transparent focus:outline-none mb-3"
+            >
+              <h3 className="text-lg font-semibold dark:text-white text-neutral-900">Страна</h3>
+              <span className="text-neutral-400">{isCountriesOpen ? '−' : '+'}</span>
+            </button>
+
+            {isCountriesOpen && (
+              <div className="space-y-2">
+                {countriesList.map((country) => {
+                  // Обрабатываем данные стран аналогично возрастным рейтингам
+                  const countryValue =
+                    typeof country === 'object'
+                      ? country.name || country.country || country.value
+                      : country;
+                  const countryId =
+                    typeof country === 'object' ? country.id || country.country_id : country;
+
+                  return (
+                    <label
+                      key={countryId}
+                      className="flex items-center space-x-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 px-2 py-1 rounded transition-colors"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={filters.countryIds.includes(countryId)}
+                        onChange={() => handleCountryToggle(countryId)}
+                        className="w-4 h-4 accent-orange-500"
+                      />
+                      <span className="dark:text-neutral-300 text-neutral-700">{countryValue}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Год выпуска */}

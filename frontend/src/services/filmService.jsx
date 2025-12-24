@@ -99,3 +99,14 @@ export const getAgeRatingById = async (id) => {
     throw err;
   }
 };
+
+// Получение всех стран
+export const getCountries = async () => {
+  try {
+    const response = await GET(`${endpoint}countries`);
+    return response.data;
+  } catch (err) {
+    console.error('Error in getCountries:', err);
+    throw err;
+  }
+};
