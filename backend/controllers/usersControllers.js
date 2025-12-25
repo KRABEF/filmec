@@ -131,6 +131,7 @@ async function login(req, res) {
       photo: user.photo,
       email: user.email,
       role: payload.role,
+      registration_date: user.registration_date
     };
 
     return res.json({
