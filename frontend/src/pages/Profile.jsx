@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Avatar, Button, ButtonSmall } from '../components';
+import { Avatar, Button, ButtonSmall, ScrollContainer } from '../components';
 
 export default function Profile() {
   const auth = useAuth();
@@ -16,7 +16,7 @@ export default function Profile() {
         login: user.login || '',
         email: user.email || '',
       });
-      setAvatarPreview(user.photo || null);
+      setAvatarPreview(`http://localhost:5075${user.photo}` || null);
     }
   }, [user]);
 
@@ -40,6 +40,7 @@ export default function Profile() {
       const formDataToSend = new FormData();
       formDataToSend.append('login', formData.login);
       formDataToSend.append('email', formData.email);
+      console.log(avatarFile);
       if (avatarFile) formDataToSend.append('photo', avatarFile);
 
       await auth.update(user.id, formDataToSend);
@@ -63,79 +64,86 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto pt-10">
-      <div className="grid grid-cols-[auto_1fr] gap-16 items-start">
-        <div className="flex flex-col items-center gap-2">
-          {avatarPreview ? (
-            <Avatar src={`http://localhost:5075${user.photo}`} height="h-52" width="w-52" />
-          ) : (
-            <div className="w-52 h-52 rounded-full bg-neutral-400/70 flex items-center justify-center text-4xl">
-              {user.login?.[0]?.toUpperCase() || '?'}
+    <ScrollContainer>
+      <div className="max-w-6xl mx-auto p-4 pt-10">
+        <div className="grid lg:grid-cols-[auto_1fr] gap-16 items-start">
+          <div className="flex flex-col items-center gap-2">
+            {avatarPreview ? (
+              <Avatar src={`${avatarPreview}`} height="h-52" width="w-52" />
+            ) : (
+              <div className="w-52 h-52 rounded-full bg-neutral-400/70 flex items-center justify-center text-4xl">
+                {user.login?.[0]?.toUpperCase() || '?'}
+              </div>
+            )}
+
+            <label className="cursor-pointer text-sm text-neutral-400 hover:text-neutral-500">
+              Изменить аватар
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
+            </label>
+
+            <div className="text-center mt-6 space-y-1">
+              <p className="text-neutral-400 text-sm">Дата регистрации</p>
+              <p className="text-lg">
+                {user.registration_date
+                  ? new Date(user.registration_date).toLocaleDateString('ru-RU', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    })
+                  : 'Не указана'}
+              </p>
             </div>
-          )}
-
-          <label className="cursor-pointer text-sm text-neutral-400 hover:text-neutral-500">
-            Изменить аватар
-            <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
-          </label>
-
-          <div className="text-center mt-6 space-y-1">
-            <p className="text-neutral-400 text-sm">Дата регистрации</p>
-            <p className="text-lg">
-              {user.registration_date
-                ? new Date(user.registration_date).toLocaleDateString('ru-RU', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  })
-                : 'Не указана'}
-            </p>
           </div>
+
+          {/* Форма */}
+          <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-6">
+            <div className="form-group">
+              <label htmlFor="login">Логин</label>
+              <input
+                type="text"
+                id="login"
+                name="login"
+                value={formData.login}
+                onChange={handleInputChange}
+                className={`w-full p-3 border rounded-lg border-orange-500`}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="email">Почта</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className={`w-full p-3 border rounded-lg border-orange-500`}
+              />
+            </div>
+
+            <div className="lg:flex gap-2">
+              <div className="w-[200px] lg:m-0 m-auto">
+                <Button type="submit">Сохранить</Button>
+              </div>
+              <div className="text-center">
+                <ButtonSmall
+                  type="button"
+                  variant="ghost"
+                  onClick={handleDeleteAccount}
+                  className="text-orange-600 hover:text-orange-700 transition text-sm"
+                >
+                  Удалить аккаунт
+                </ButtonSmall>
+              </div>
+            </div>
+          </form>
         </div>
-
-        {/* Форма */}
-        <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-6">
-          <div className="form-group">
-            <label htmlFor="login">Логин</label>
-            <input
-              type="text"
-              id="login"
-              name="login"
-              value={formData.login}
-              onChange={handleInputChange}
-              className={`w-full p-3 border rounded-lg border-orange-500`}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">Почта</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className={`w-full p-3 border rounded-lg border-orange-500`}
-            />
-          </div>
-
-          <div className="flex gap-2">
-            <div className="w-[200px]">
-              <Button type="submit">Сохранить</Button>
-            </div>
-            <div className="">
-              <ButtonSmall
-                type="button"
-                variant="ghost"
-                onClick={handleDeleteAccount}
-                className="text-orange-600 hover:text-orange-700 transition text-sm"
-              >
-                Удалить аккаунт
-              </ButtonSmall>
-            </div>
-          </div>
-        </form>
       </div>
-    </div>
+    </ScrollContainer>
   );
 }

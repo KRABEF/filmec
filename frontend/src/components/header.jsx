@@ -38,9 +38,15 @@ export const Header = () => {
                   onClick={() => setIsOpen((prev) => !prev)}
                 >
                   {/* <Avatar src={user.avatar} alt={user.name || user.email} /> */}
-                  {user.photo && (
-                    <Avatar src={`http://localhost:5075${user.photo}`} height="h-10" width="w-10" />
-                  )}
+                  <div className="lg:block hidden">
+                    {user.photo && (
+                      <Avatar
+                        src={`http://localhost:5075${user.photo}`}
+                        height="h-10"
+                        width="w-10"
+                      />
+                    )}
+                  </div>
                   <p>{user.email}</p>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

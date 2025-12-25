@@ -25,7 +25,11 @@ app.use('/api/films', require('../route/filmsRoute.js'));
 // users
 const { authenticateToken, globalGuard } = require('../middlewares/auth');
 app.use('/api/users', authenticateToken, globalGuard, require('../route/usersRoute'));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(
+  '/uploads',
+  express.static(path.join(__dirname, '..', 'uploads'))
+);
+
 
 // CRUD
 app.use('/api/directors', require('../route/directorsCRUDRoute.js'));
