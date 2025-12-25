@@ -2,7 +2,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-export const ActorCarousel = ({ actors }) => {
+export const ActorCarousel = ({ film }) => {
   const settings = {
     infinite: true,
     speed: 500,
@@ -42,13 +42,27 @@ export const ActorCarousel = ({ actors }) => {
       },
     ],
   };
+  const allActors = [
+    ...(film.directors || []).map((dir) => ({
+      id: `dir-${dir.name}-${Math.random()}`,
+      name: `${dir.name} ${dir.surname || ''}`.trim(),
+      photo: dir.photo ? `/img/resources/director/${dir.photo}` : null,
+      isDirector: true,
+    })),
+    ...(film.actors || []).map((actor) => ({
+      id: `act-${actor.name}-${Math.random()}`,
+      name: `${actor.name} ${actor.surname || ''}`.trim(),
+      photo: actor.photo ? `/img/resources/actors/${actor.photo}` : null,
+      isDirector: false,
+    })),
+  ];
 
   return (
     <div className="relative">
       <h3 className="text-3xl font-bold flex items-center gap-2 mb-7">Режиссёры и актёры</h3>
       <div className="slider-container relative mx-18">
         <Slider {...settings}>
-          {actors.map((actor) => (
+          {allActors.map((actor) => (
             <div key={actor.id} className="px-2">
               <div className="flex flex-col items-center cursor-pointer">
                 <div className="relative">

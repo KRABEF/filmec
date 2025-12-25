@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { userLogin, userCreate, userUpdate } from '../services/userService';
+import { userLogin, userCreate, userUpdate, userDelete } from '../services/userService';
 
 /**
  * Хук для управления аутентификацией пользователя
@@ -96,6 +96,23 @@ export const useAuth = () => {
     }
   };
 
+  const deleteId = async (id) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await userDelete(id);
+      logout();
+      window.location.href = '/login';
+    } catch (err) {
+      const errMess = err.response?.data?.error || err.message || 'Ошибка удаления пользователя';
+      setError(errMess);
+      throw errMess;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     user,
     loading,
@@ -104,5 +121,6 @@ export const useAuth = () => {
     register,
     update,
     logout,
+    deleteId,
   };
 };

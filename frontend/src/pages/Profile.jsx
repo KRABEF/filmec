@@ -1,93 +1,175 @@
-import { useState } from 'react';
-import { Avatar } from '../components/ui/avatar';
-import { Button } from '../components/ui/button';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { Avatar, Button, ButtonSmall, ScrollContainer } from '../components';
+import { ErrorAlert } from '../components/ui/errorAlert';
 
 export default function Profile() {
-  const [activeTab, setActiveTab] = useState('favorites');
+  const auth = useAuth();
+  const { user } = auth;
+  const [error, setError] = useState('');
+
+  const [formData, setFormData] = useState({ login: '', email: '' });
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        login: user.login || '',
+        email: user.email || '',
+      });
+      setAvatarPreview(user.photo ? `http://localhost:5075${user.photo}` : null);
+    }
+  }, [user]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('login', formData.login);
+      formDataToSend.append('email', formData.email);
+      if (avatarFile) formDataToSend.append('photo', avatarFile);
+
+      await auth.update(user.id, formDataToSend);
+    } catch (err) {
+      const backendError =
+        err ||
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        err.response?.data?.error ||
+        'Не удалось сохранить изменения';
+      setError(backendError);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (confirm('Удалить аккаунт навсегда?')) {
+      try {
+        await auth.deleteId(user.id);
+      } catch (err) {
+        console.error('Ошибка:', err);
+      }
+    }
+  };
+
+  if (auth.loading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
-    <div className="m-auto container p-7">
-      <div className="flex justify-between items-center mb-12">
-        <div className="flex items-center">
-          <Avatar height="h-30" width="w-30" />
-          <div className="ml-4 flex flex-col justify-between h-30">
-            <p className="text-lg font-medium">ivan@ivan.com</p>
-            <div>
-              <p className="text-gray-300">Дата регистрации</p>
-              <p className="border-2 mt-1 py-1 px-3 text-lg rounded-lg border-amber-600 w-fit">
-                01.01.2023
+    <ScrollContainer>
+      <div className="max-w-6xl mx-auto p-4 pt-10 space-y-10">
+        {/* <div className="max-w-xl space-y-4">
+          <h1 className="font-bold text-2xl">Ваш профиль</h1>
+          <p className="text-sm">
+            Настройте параметры вашего профиля. Вы можете обновить фотографию аватара, логин и адрес
+            электронной почты. Нажмите "Сохранить" для применения изменений.
+          </p>
+        </div> */}
+
+        <div className="grid md:grid-cols-[auto_1fr] gap-16 items-start">
+          <div className="flex flex-col items-center gap-6">
+            <div className="relative group">
+              {avatarPreview ? (
+                <Avatar src={avatarPreview} height="h-56" width="w-56" />
+              ) : (
+                <div className="w-56 h-56 rounded-full bg-neutral-400/70 flex items-center justify-center text-5xl">
+                  {user.login?.[0]?.toUpperCase() || '?'}
+                </div>
+              )}
+
+              <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center rounded-full cursor-pointer">
+                <span className="text-white text-sm">Сменить фото</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                />
+              </label>
+            </div>
+
+            <div className="text-center space-y-1">
+              <p className="text-neutral-400 text-sm">Дата регистрации</p>
+              <p className="text-base">
+                {new Date(user.registration_date).toLocaleDateString('ru-RU', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })}
               </p>
             </div>
           </div>
-          <div className="ml-12">
-            <Button variant="primary" size="lg" className="flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                fill="currentColor"
-                className="bi bi-download"
-                viewBox="0 0 16 16"
-              >
-                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
-                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z" />
-              </svg>
-              Скачать грамоту
-            </Button>
-          </div>
-          <div className="ml-12">
-            <Button variant="primary" size="lg" className="flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-upload"
-                viewBox="0 0 16 16"
-              >
-                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
-                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z" />
-              </svg>
-              Импортировать медиатеку{' '}
-            </Button>
-          </div>
+
+          {/* Форма */}
+          <form
+            onSubmit={handleSubmit}
+            className=" w-full max-w-lg space-y-6"
+            // className=" w-full max-w-lg space-y-6 bg-white dark:bg-neutral-700/50 p-7 rounded-xl shadow-xl"
+          >
+            <ErrorAlert message={error} onClose={() => setError('')} />
+            <div className="form-group ">
+              <label htmlFor="login">Логин</label>
+              <input
+                type="text"
+                id="login"
+                name="login"
+                value={formData.login}
+                onChange={handleInputChange}
+                className={`w-full p-3 border rounded-lg border-orange-500`}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="email">Почта</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className={`w-full p-3 border rounded-lg border-orange-500`}
+              />
+            </div>
+
+            <div className="lg:flex gap-1">
+              <div className="w-[200px] lg:m-0 m-auto">
+                <ButtonSmall type="submit">Сохранить</ButtonSmall>
+              </div>
+              <div className="text-center">
+                <ButtonSmall
+                  type="button"
+                  variant="ghost"
+                  onClick={handleDeleteAccount}
+                  className="text-red-600 hover:text-red-700 transition text-sm"
+                >
+                  Удалить аккаунт
+                </ButtonSmall>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
-
-      <div className="flex flex-col items-center">
-        <h1 className="text-3xl font-bold mb-8">Фильмотека</h1>
-
-        <div className="flex gap-8 mb-8">
-          <button
-            onClick={() => setActiveTab('favorites')}
-            className={`pb-2 text-lg font-medium relative ${
-              activeTab === 'favorites'
-                ? 'text-amber-600 after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-full after:bg-amber-600'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            Избранное
-          </button>
-
-          <button
-            onClick={() => setActiveTab('watchLater')}
-            className={`pb-2 text-lg font-medium relative ${
-              activeTab === 'watchLater'
-                ? 'text-amber-600 after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-full after:bg-amber-600'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            Смотреть позже
-          </button>
-        </div>
-
-        {activeTab === 'favorites' && (
-          <p className="text-gray-500 mt-4">Здесь будут фильмы из избранного</p>
-        )}
-        {activeTab === 'watchLater' && (
-          <p className="text-gray-500 mt-4">Здесь будут фильмы "смотреть позже"</p>
-        )}
-      </div>
-    </div>
+    </ScrollContainer>
   );
 }
