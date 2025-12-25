@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../hooks/useAuth';
 import { Avatar, Button, ButtonSmall, ScrollContainer } from '../components';
 import { ErrorAlert } from '../components/ui/errorAlert';
+import { useAuthContext } from '../context/AuthContext';
 
 export default function Profile() {
-  const auth = useAuth();
+  const auth = useAuthContext();
   const { user } = auth;
   const [error, setError] = useState('');
 

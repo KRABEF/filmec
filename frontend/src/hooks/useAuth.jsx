@@ -35,6 +35,7 @@ export const useAuth = () => {
     const storedUser = authStorage.loadUser();
     if (storedUser) setUser(storedUser);
   }, []);
+  
 
   const login = async (credentials) => {
     setLoading(true);
@@ -86,6 +87,8 @@ export const useAuth = () => {
       const response = await userUpdate(id, data);
       authStorage.save(response.user, authStorage.loadToken());
       setUser(response.user);
+      // window.location.reload();
+
       return response;
     } catch (err) {
       const errMess = err.response?.data?.error || err.message || 'Ошибка обновления пользователя';
