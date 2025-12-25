@@ -1,65 +1,140 @@
-import { useState } from 'react';
-import { Avatar } from '../components/ui/avatar';
-import { useAuthContext } from '../context/AuthContext';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { Avatar, Button, ButtonSmall } from '../components';
 
 export default function Profile() {
-  const auth = useAuthContext();
-  const [formData, setFormData] = useState({});
+  const auth = useAuth();
+  const { user } = auth;
 
-  if (!auth?.user) {
-    return (
-      <div className="m-auto container p-7">
-        <p>Загрузка...</p>
-      </div>
-    );
-  }
+  const [formData, setFormData] = useState({ login: '', email: '' });
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        login: user.login || '',
+        email: user.email || '',
+      });
+      setAvatarPreview(user.photo || null);
+    }
+  }, [user]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  const { user } = auth;
-  return (
-    <div className="m-auto container p-7">
-      <div className="flex justify-between items-center mb-12">
-        <div className="flex items-center">
-          <Avatar height="h-30" width="w-30" />
-          <div className="ml-4 flex flex-col justify-between h-30">
-            {/* <Avatar src={user.photo} /> */}
-            <p className="text-lg font-medium">ivan@ivan.com</p>
-            <div>
-              <p className="text-gray-300">Дата регистрации</p>
-              <p className="border-2 mt-1 py-1 px-3 text-lg rounded-lg border-amber-600 w-fit">
-                01.01.2023
-              </p>
-            </div>
 
-            <form action="" className="space-y-3">
-              <div className="form-group">
-                <label htmlFor="login">Логин</label>
-                <input
-                  type="text"
-                  id="login"
-                  name="login"
-                  value={user.login || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="login">Почта</label>
-                <input
-                  type="text"
-                  id="login"
-                  name="login"
-                  value={user.email || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </form>
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('login', formData.login);
+      formDataToSend.append('email', formData.email);
+      if (avatarFile) formDataToSend.append('photo', avatarFile);
+
+      await auth.update(user.id, formDataToSend);
+    } catch (err) {
+      console.error('Ошибка обновления:', err);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (confirm('Удалить аккаунт навсегда?')) {
+      try {
+        await auth.deleteId(user.id);
+      } catch (err) {
+        console.error('Ошибка:', err);
+      }
+    }
+  };
+
+  if (auth.loading || !user) {
+    return <div className="min-h-screen flex items-center justify-center">Загрузка...</div>;
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto pt-10">
+      <div className="grid grid-cols-[auto_1fr] gap-16 items-start">
+        <div className="flex flex-col items-center gap-2">
+          {avatarPreview ? (
+            <Avatar src={`http://localhost:5075${user.photo}`} height="h-52" width="w-52" />
+          ) : (
+            <div className="w-52 h-52 rounded-full bg-neutral-400/70 flex items-center justify-center text-4xl">
+              {user.login?.[0]?.toUpperCase() || '?'}
+            </div>
+          )}
+
+          <label className="cursor-pointer text-sm text-neutral-400 hover:text-neutral-500">
+            Изменить аватар
+            <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+          </label>
+
+          <div className="text-center mt-6 space-y-1">
+            <p className="text-neutral-400 text-sm">Дата регистрации</p>
+            <p className="text-lg">
+              {user.registration_date
+                ? new Date(user.registration_date).toLocaleDateString('ru-RU', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })
+                : 'Не указана'}
+            </p>
           </div>
         </div>
+
+        {/* Форма */}
+        <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-6">
+          <div className="form-group">
+            <label htmlFor="login">Логин</label>
+            <input
+              type="text"
+              id="login"
+              name="login"
+              value={formData.login}
+              onChange={handleInputChange}
+              className={`w-full p-3 border rounded-lg border-orange-500`}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="email">Почта</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className={`w-full p-3 border rounded-lg border-orange-500`}
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <div className="w-[200px]">
+              <Button type="submit">Сохранить</Button>
+            </div>
+            <div className="">
+              <ButtonSmall
+                type="button"
+                variant="ghost"
+                onClick={handleDeleteAccount}
+                className="text-orange-600 hover:text-orange-700 transition text-sm"
+              >
+                Удалить аккаунт
+              </ButtonSmall>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );
