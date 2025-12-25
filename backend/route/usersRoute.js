@@ -4,6 +4,8 @@ const path = require('path');
 const multer = require('multer');
 const usersController = require('../controllers/usersControllers');
 
+const UPLOADS_DIR = path.resolve(__dirname, '../uploads');
+
 const { authenticateToken } = require('../middlewares/auth');
 const { requireAdmin } = require('../middlewares/checkRole');
 
@@ -15,13 +17,14 @@ function adminOrOwner(req, res, next) {
 }
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, '..', '..', 'uploads')),
+  destination: (req, file, cb) => cb(null, UPLOADS_DIR),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
     const name = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
     cb(null, name);
   },
 });
+
 const upload = multer({ storage });
 
 router.post('/create', usersController.create);
