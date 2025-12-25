@@ -128,6 +128,7 @@ async function login(req, res) {
     const publicUser = {
       id: user.id,
       login: user.login,
+      photo: user.photo,
       email: user.email,
       role: payload.role,
     };
