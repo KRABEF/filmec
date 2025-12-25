@@ -36,7 +36,8 @@ async function create(req, res) {
         id: user.id,
         login: user.login,
         email: user.email,
-        role: payload.role
+        role: payload.role,
+        registration_date: user.registration_date
       }
     });
   } catch (err) {
