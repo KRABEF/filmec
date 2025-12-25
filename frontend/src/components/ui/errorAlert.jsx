@@ -2,7 +2,7 @@ export const ErrorAlert = ({ message, onClose }) => {
   if (!message) return null;
 
   return (
-    <div className="w-full rounded-xl bg-red-200/80 text-red-700 px-4 py-4 flex items-start justify-between gap-4 animate-fade-in">
+    <div className="w-full rounded-xl bg-red-200/80 dark:bg-red-500 text-red-700 dark:text-red-100 px-4 py-4 flex items-start justify-between gap-4 animate-fade-in">
       <div className="flex gap-3 items-center">
         <span className="text-xl leading-none">
           <svg
