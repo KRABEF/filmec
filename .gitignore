@@ -31,3 +31,6 @@ data
 
 repl.js
 test-db.js
+
+public/
+!public/img/.gitkeep

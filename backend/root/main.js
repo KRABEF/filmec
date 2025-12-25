@@ -7,8 +7,8 @@ const cors = require('cors');
 const requestLogger = require('../middlewares/requestLogger.js');
 
 const app = express();
-const BACK_PORT = process.env.BACK_PORT || 3000;
-const FRONT_PORT = process.env.FRONT_PORT || 3001;
+const BACK_PORT = process.env.BACK_PORT || 5075;
+const FRONT_PORT = process.env.FRONT_PORT || 5173;
 
 corsOptions = {
   origin: `http://localhost:${FRONT_PORT}`,
