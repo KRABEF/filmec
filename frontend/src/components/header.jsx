@@ -34,7 +34,7 @@ export const Header = () => {
             {user ? (
               <>
                 <div
-                  className="flex gap-2 items-center select-none cursor-pointer"
+                  className="flex gap-4 items-center select-none cursor-pointer"
                   onClick={() => setIsOpen((prev) => !prev)}
                 >
                   {/* <Avatar src={user.avatar} alt={user.name || user.email} /> */}

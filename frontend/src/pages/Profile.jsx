@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Avatar, Button, ButtonSmall, ScrollContainer } from '../components';
+import { ErrorAlert } from '../components/ui/errorAlert';
 
 export default function Profile() {
   const auth = useAuth();
   const { user } = auth;
+  const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({ login: '', email: '' });
   const [avatarPreview, setAvatarPreview] = useState(null);
@@ -16,7 +18,7 @@ export default function Profile() {
         login: user.login || '',
         email: user.email || '',
       });
-      setAvatarPreview(`http://localhost:5075${user.photo}` || null);
+      setAvatarPreview(user.photo ? `http://localhost:5075${user.photo}` : null);
     }
   }, [user]);
 
@@ -35,17 +37,24 @@ export default function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
 
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('login', formData.login);
       formDataToSend.append('email', formData.email);
-      console.log(avatarFile);
       if (avatarFile) formDataToSend.append('photo', avatarFile);
 
       await auth.update(user.id, formDataToSend);
     } catch (err) {
-      console.error('Ошибка обновления:', err);
+      const backendError =
+        err ||
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        err.response?.data?.error ||
+        'Не удалось сохранить изменения';
+      setError(backendError);
     }
   };
 
@@ -60,49 +69,66 @@ export default function Profile() {
   };
 
   if (auth.loading || !user) {
-    return <div className="min-h-screen flex items-center justify-center">Загрузка...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
   return (
     <ScrollContainer>
-      <div className="max-w-6xl mx-auto p-4 pt-10">
-        <div className="grid lg:grid-cols-[auto_1fr] gap-16 items-start">
-          <div className="flex flex-col items-center gap-2">
-            {avatarPreview ? (
-              <Avatar src={`${avatarPreview}`} height="h-52" width="w-52" />
-            ) : (
-              <div className="w-52 h-52 rounded-full bg-neutral-400/70 flex items-center justify-center text-4xl">
-                {user.login?.[0]?.toUpperCase() || '?'}
-              </div>
-            )}
+      <div className="max-w-6xl mx-auto p-4 pt-10 space-y-10">
+        {/* <div className="max-w-xl space-y-4">
+          <h1 className="font-bold text-2xl">Ваш профиль</h1>
+          <p className="text-sm">
+            Настройте параметры вашего профиля. Вы можете обновить фотографию аватара, логин и адрес
+            электронной почты. Нажмите "Сохранить" для применения изменений.
+          </p>
+        </div> */}
 
-            <label className="cursor-pointer text-sm text-neutral-400 hover:text-neutral-500">
-              Изменить аватар
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleAvatarChange}
-              />
-            </label>
+        <div className="grid md:grid-cols-[auto_1fr] gap-16 items-start">
+          <div className="flex flex-col items-center gap-6">
+            <div className="relative group">
+              {avatarPreview ? (
+                <Avatar src={avatarPreview} height="h-56" width="w-56" />
+              ) : (
+                <div className="w-56 h-56 rounded-full bg-neutral-400/70 flex items-center justify-center text-5xl">
+                  {user.login?.[0]?.toUpperCase() || '?'}
+                </div>
+              )}
 
-            <div className="text-center mt-6 space-y-1">
+              <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center rounded-full cursor-pointer">
+                <span className="text-white text-sm">Сменить фото</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                />
+              </label>
+            </div>
+
+            <div className="text-center space-y-1">
               <p className="text-neutral-400 text-sm">Дата регистрации</p>
-              <p className="text-lg">
-                {user.registration_date
-                  ? new Date(user.registration_date).toLocaleDateString('ru-RU', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })
-                  : 'Не указана'}
+              <p className="text-base">
+                {new Date(user.registration_date).toLocaleDateString('ru-RU', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })}
               </p>
             </div>
           </div>
 
           {/* Форма */}
-          <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-6">
-            <div className="form-group">
+          <form
+            onSubmit={handleSubmit}
+            className=" w-full max-w-lg space-y-6"
+            // className=" w-full max-w-lg space-y-6 bg-white dark:bg-neutral-700/50 p-7 rounded-xl shadow-xl"
+          >
+            <ErrorAlert message={error} onClose={() => setError('')} />
+            <div className="form-group ">
               <label htmlFor="login">Логин</label>
               <input
                 type="text"
@@ -126,16 +152,16 @@ export default function Profile() {
               />
             </div>
 
-            <div className="lg:flex gap-2">
+            <div className="lg:flex gap-1">
               <div className="w-[200px] lg:m-0 m-auto">
-                <Button type="submit">Сохранить</Button>
+                <ButtonSmall type="submit">Сохранить</ButtonSmall>
               </div>
               <div className="text-center">
                 <ButtonSmall
                   type="button"
                   variant="ghost"
                   onClick={handleDeleteAccount}
-                  className="text-orange-600 hover:text-orange-700 transition text-sm"
+                  className="text-red-600 hover:text-red-700 transition text-sm"
                 >
                   Удалить аккаунт
                 </ButtonSmall>
