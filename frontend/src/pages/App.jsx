@@ -78,16 +78,17 @@ export default function App() {
   const formattedFilms = films.map(film => {
     const genreNames = getGenreNamesFromFilm(film);
     const formattedDate = formatDate(film.release_date);
+    console.log(film)
     
     return {
       id: film.id,
       name: film.name || film.title || 'Без названия',
       release_date: formattedDate || film.year || '',
-      genres: genreNames,
+      genres: film.genres,
       duration_movie: film.duration_movie ? `${film.duration_movie} мин` : '0 мин',
       rating: film.rating || film.average_rating || 0,
       ageLimit: film.age_rating || film.age_limit || film.ageLimit || '0+',
-      poster: film.poster || film.poster_url || film.image || '/placeholder-poster.jpg',
+      poster: film.cover ,
     };
   });
 
