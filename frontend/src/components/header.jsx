@@ -34,10 +34,19 @@ export const Header = () => {
             {user ? (
               <>
                 <div
-                  className="flex gap-2 items-center select-none cursor-pointer"
+                  className="flex gap-4 items-center select-none cursor-pointer"
                   onClick={() => setIsOpen((prev) => !prev)}
                 >
-                  <Avatar src={user.avatar} alt={user.name || user.email} />
+                  {/* <Avatar src={user.avatar} alt={user.name || user.email} /> */}
+                  <div className="lg:block hidden">
+                    {user.photo && (
+                      <Avatar
+                        src={`http://localhost:5075${user.photo}`}
+                        height="h-10"
+                        width="w-10"
+                      />
+                    )}
+                  </div>
                   <p>{user.email}</p>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +82,11 @@ export const Header = () => {
                 <ButtonSmall onClick={() => navigate('/login')} variant="ghost">
                   Войти
                 </ButtonSmall>
-                <Button onClick={() => navigate('/register')} variant="outline" className='lg:block hidden'>
+                <Button
+                  onClick={() => navigate('/register')}
+                  variant="outline"
+                  className="lg:block hidden"
+                >
                   Зарегистрироваться
                 </Button>
               </div>

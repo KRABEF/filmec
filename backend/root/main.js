@@ -7,8 +7,8 @@ const cors = require('cors');
 const requestLogger = require('../middlewares/requestLogger.js');
 
 const app = express();
-const BACK_PORT = process.env.BACK_PORT || 3000;
-const FRONT_PORT = process.env.FRONT_PORT || 3001;
+const BACK_PORT = process.env.BACK_PORT || 5075;
+const FRONT_PORT = process.env.FRONT_PORT || 5173;
 
 corsOptions = {
   origin: `http://localhost:${FRONT_PORT}`,
@@ -26,6 +26,7 @@ app.use('/api/films', require('../route/filmsRoute.js'));
 const { authenticateToken, globalGuard } = require('../middlewares/auth');
 app.use('/api/users', authenticateToken, globalGuard, require('../route/usersRoute'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // CRUD
 app.use('/api/directors', require('../route/directorsCRUDRoute.js'));
