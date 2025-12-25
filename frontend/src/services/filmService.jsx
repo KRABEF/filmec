@@ -110,3 +110,14 @@ export const getCountries = async () => {
     throw err;
   }
 };
+
+// Добавьте эту функцию в filmService.jsx в конце файла:
+export const getFilteredFilms = async (params = {}) => {
+  try {
+    const response = await GET(`${endpoint}films`, { params });
+    return response.data;
+  } catch (err) {
+    console.error('Error in getFilteredFilms:', err);
+    throw err;
+  }
+};

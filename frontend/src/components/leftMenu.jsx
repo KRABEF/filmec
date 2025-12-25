@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '../components/ui/button';
 import { useFilms } from '../hooks/useFilms';
 import { useAgeRatings } from '../hooks/useAgeRatings';
-import { useCountries } from '../hooks/useCountries'; // Добавляем импорт хука стран
+import { useCountries } from '../hooks/useCountries';
 
 export const LeftMenu = ({ onFiltersChange }) => {
   const { allGenres, genres_name } = useFilms();
   const { fetchAgeRatings, ageRatingsList } = useAgeRatings();
-  const { fetchCountries, countriesList } = useCountries(); // Используем хук стран
+  const { fetchCountries, countriesList } = useCountries();
 
   useEffect(() => {
     allGenres();
     fetchAgeRatings();
-    fetchCountries(); // Получаем страны при загрузке
+    fetchCountries();
   }, []);
 
   const currentYear = new Date().getFullYear();
@@ -22,54 +22,51 @@ export const LeftMenu = ({ onFiltersChange }) => {
     minRating: 7,
     ageRating: [],
     minYear: 2025,
-    countryIds: [], // Изменяем название на countryIds для соответствия API
+    countryIds: [],
+    maxDuration: 300, // Добавляем фильтр по длительности (в минутах)
   });
 
   const [isGenresOpen, setIsGenresOpen] = useState(false);
   const [isRatingOpen, setIsRatingOpen] = useState(false);
   const [isAgeRatingOpen, setIsAgeRatingOpen] = useState(false);
   const [isYearOpen, setIsYearOpen] = useState(false);
-  const [isCountriesOpen, setIsCountriesOpen] = useState(false); // Для стран
+  const [isCountriesOpen, setIsCountriesOpen] = useState(false);
+  const [isDurationOpen, setIsDurationOpen] = useState(false); // Для длительности
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Вспомогательная функция для обработки стран
   const getCountryInfo = (country) => {
     if (Array.isArray(country) && country.length >= 3) {
-      // Формат: [195, 198, 'СССР']
       return {
-        id: country[1], // Второй элемент - ID
-        name: country[2], // Третий элемент - название
+        id: country[1],
+        name: country[2],
       };
     }
 
     if (typeof country === 'object') {
-      // Если объект, пробуем получить значения
       const values = Object.values(country);
       if (values.length >= 3 && typeof values[2] === 'string') {
         return {
-          id: values[1], // Второе значение - ID
-          name: values[2], // Третье значение - название
+          id: values[1],
+          name: values[2],
         };
       }
 
-      // Стандартные форматы
       return {
         id: country.id || country.country_id,
         name: country.name || country.country || country.value,
       };
     }
 
-    // Если страна пришла как строка
     return {
       id: country,
       name: country,
     };
   };
 
-  const handleGenreToggle = (genre) => {
-    const newGenres = filters.genres.includes(genre)
-      ? filters.genres.filter((g) => g !== genre)
-      : [...filters.genres, genre];
+  const handleGenreToggle = (genreId) => {
+    const newGenres = filters.genres.includes(genreId)
+      ? filters.genres.filter((id) => id !== genreId)
+      : [...filters.genres, genreId];
 
     const newFilters = { ...filters, genres: newGenres };
     setFilters(newFilters);
@@ -122,19 +119,49 @@ export const LeftMenu = ({ onFiltersChange }) => {
     }
   };
 
+  // Обработчик изменения длительности
+  const handleDurationChange = (duration) => {
+    const newFilters = { ...filters, maxDuration: duration };
+    setFilters(newFilters);
+    onFiltersChange?.(newFilters);
+  };
+
+  const handleDurationInputChange = (e) => {
+    const value = e.target.value;
+    if (value === '') {
+      handleDurationChange(0);
+      return;
+    }
+
+    const duration = parseInt(value);
+    if (!isNaN(duration)) {
+      handleDurationChange(Math.min(600, Math.max(0, duration))); // Ограничиваем от 0 до 600 минут
+    }
+  };
+
   const resetFilters = () => {
     const newFilters = {
       genres: [],
       minRating: 7,
       ageRating: [],
       minYear: 2025,
-      countryIds: [], // Сбрасываем страны тоже
+      countryIds: [],
+      maxDuration: 300, // Сбрасываем до значения по умолчанию
     };
     setFilters(newFilters);
     onFiltersChange?.(newFilters);
   };
 
-  // Мобильная версия
+  // Форматирование длительности для отображения
+  const formatDuration = (minutes) => {
+    if (minutes >= 60) {
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      return mins > 0 ? `${hours} ч ${mins} мин` : `${hours} ч`;
+    }
+    return `${minutes} мин`;
+  };
+
   return (
     <>
       {/* Кнопка открытия меню на мобильных */}
@@ -186,19 +213,22 @@ export const LeftMenu = ({ onFiltersChange }) => {
 
           {isGenresOpen && (
             <div className="mt-2 space-y-3 pl-2">
-              {genres_name.map((genre) => (
-                <label key={genre} className="flex items-center space-x-3 cursor-pointer py-2">
-                  <input
-                    type="checkbox"
-                    checked={filters.genres.includes(genre)}
-                    onChange={() => handleGenreToggle(genre)}
-                    className="w-5 h-5 accent-orange-500"
-                  />
-                  <span className="text-neutral-300 hover:text-white text-base">
-                    {typeof genre === 'object' ? genre.genres : genre}
-                  </span>
-                </label>
-              ))}
+              {genres_name.map((genre) => {
+                const genreId = typeof genre === 'object' ? genre.id : genre;
+                const genreName = typeof genre === 'object' ? genre.name || genre.genres : genre;
+
+                return (
+                  <label key={genreId} className="flex items-center space-x-3 cursor-pointer py-2">
+                    <input
+                      type="checkbox"
+                      checked={filters.genres.includes(genreId)}
+                      onChange={() => handleGenreToggle(genreId)}
+                      className="w-5 h-5 accent-orange-500"
+                    />
+                    <span className="text-neutral-300 hover:text-white text-base">{genreName}</span>
+                  </label>
+                );
+              })}
             </div>
           )}
         </div>
@@ -301,7 +331,6 @@ export const LeftMenu = ({ onFiltersChange }) => {
           {isCountriesOpen && (
             <div className="mt-2 space-y-3 pl-2">
               {countriesList.map((country) => {
-                // Обрабатываем данные стран аналогично возрастным рейтингам
                 const countryValue =
                   typeof country === 'object'
                     ? country.name || country.country || country.value
@@ -353,6 +382,68 @@ export const LeftMenu = ({ onFiltersChange }) => {
                   className="w-24 px-3 py-2 bg-neutral-800 border border-neutral-600 rounded text-white text-base 
                            focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Секция длительности фильма */}
+        <div className="mb-6">
+          <button
+            onClick={() => setIsDurationOpen(!isDurationOpen)}
+            className="flex justify-between items-center w-full text-left py-3"
+          >
+            <h3 className="text-lg font-semibold text-white">
+              Длительность до {formatDuration(filters.maxDuration)}
+            </h3>
+            <span className="text-neutral-400 text-xl">{isDurationOpen ? '−' : '+'}</span>
+          </button>
+
+          {isDurationOpen && (
+            <div className="mt-4 pl-2">
+              <div className="relative">
+                <input
+                  type="range"
+                  min="0"
+                  max="300"
+                  step="15"
+                  value={filters.maxDuration}
+                  onChange={(e) => handleDurationChange(parseInt(e.target.value))}
+                  className="w-full h-2 bg-neutral-700 rounded-full appearance-none cursor-pointer 
+                           [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 
+                           [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-orange-500 
+                           [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-neutral-900 
+                           [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:rounded-full 
+                           [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-neutral-900"
+                />
+                {/* Деления */}
+                <div className="flex justify-between px-1 mt-4">
+                  {[0, 60, 120, 180, 240, 300].map((minutes) => (
+                    <span
+                      key={minutes}
+                      className={`text-xs ${
+                        minutes <= filters.maxDuration
+                          ? 'text-orange-500 font-bold'
+                          : 'text-neutral-400'
+                      }`}
+                    >
+                      {formatDuration(minutes)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-4 flex items-center space-x-3">
+                <span className="text-neutral-300 text-base">Или укажите:</span>
+                <input
+                  type="number"
+                  value={filters.maxDuration}
+                  onChange={handleDurationInputChange}
+                  min="0"
+                  max="600"
+                  className="w-24 px-3 py-2 bg-neutral-800 border border-neutral-600 rounded text-white text-base 
+                           focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
+                <span className="text-neutral-400 text-base">мин</span>
               </div>
             </div>
           )}
@@ -494,7 +585,6 @@ export const LeftMenu = ({ onFiltersChange }) => {
             {isCountriesOpen && (
               <div className="space-y-2">
                 {countriesList.map((country) => {
-                  // Обрабатываем данные стран аналогично возрастным рейтингам
                   const countryValue =
                     typeof country === 'object'
                       ? country.name || country.country || country.value
@@ -522,7 +612,7 @@ export const LeftMenu = ({ onFiltersChange }) => {
           </div>
 
           {/* Год выпуска */}
-          <div>
+          <div className="mb-6">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-semibold dark:text-white text-neutral-900">
                 Год выпуска от
@@ -539,6 +629,61 @@ export const LeftMenu = ({ onFiltersChange }) => {
           focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-xs
           hover:border-orange-400 transition-colors"
               />
+            </div>
+          </div>
+
+          {/* Длительность фильма */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-semibold dark:text-white text-neutral-900">
+                Длительность до {formatDuration(filters.maxDuration)}
+              </h3>
+            </div>
+
+            <div className="relative">
+              <input
+                type="range"
+                min="0"
+                max="300"
+                step="15"
+                value={filters.maxDuration}
+                onChange={(e) => handleDurationChange(parseInt(e.target.value))}
+                className="w-full h-1.5 bg-gradient-to-r from-orange-400/40 to-orange-600/40 rounded-full appearance-none cursor-pointer 
+          [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 
+          [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-orange-500 
+          [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(255,140,0,0.5)]
+          hover:[&::-webkit-slider-thumb]:scale-110 transition-transform"
+              />
+
+              <div className="flex justify-between px-1 mt-3">
+                {[0, 60, 120, 180, 240, 300].map((minutes) => (
+                  <span
+                    key={minutes}
+                    className={`text-xs ${
+                      minutes <= filters.maxDuration
+                        ? 'text-orange-500 font-bold'
+                        : 'text-neutral-400'
+                    }`}
+                  >
+                    {formatDuration(minutes)}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4 flex items-center space-x-3">
+              <span className="text-neutral-700 dark:text-neutral-300 text-sm">Или укажите:</span>
+              <input
+                type="number"
+                value={filters.maxDuration}
+                onChange={handleDurationInputChange}
+                min="0"
+                max="600"
+                className="w-20 px-2 py-1 bg-white dark:bg-neutral-800 border border-neutral-200/90 dark:border-neutral-900/90 rounded-lg 
+                text-neutral-800 dark:text-neutral-100 text-md 
+                focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-xs"
+              />
+              <span className="text-neutral-600 dark:text-neutral-400 text-sm">мин</span>
             </div>
           </div>
         </div>
