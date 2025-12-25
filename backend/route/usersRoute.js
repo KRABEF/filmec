@@ -4,7 +4,7 @@ const path = require('path');
 const multer = require('multer');
 const usersController = require('../controllers/usersControllers');
 
-const UPLOADS_DIR = path.resolve(__dirname, '../uploads');
+const UPLOADS_DIR = path.resolve(__dirname, '../../root/uploads'); 
 
 const { authenticateToken } = require('../middlewares/auth');
 const { requireAdmin } = require('../middlewares/checkRole');
