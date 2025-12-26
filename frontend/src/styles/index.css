@@ -57,3 +57,6 @@ input:focus {
   /* color: var(--color-neutral-500); */
   font-weight: 700;
 }
+.check {
+  width: 20px;
+}

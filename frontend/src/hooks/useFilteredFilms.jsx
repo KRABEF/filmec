@@ -1,4 +1,3 @@
-// useFilteredFilms.jsx
 import { useState, useEffect, useCallback } from 'react';
 import { getFilteredFilms } from '../services/filmService';
 
@@ -8,29 +7,33 @@ export const useFilteredFilms = (filters = {}) => {
   const [error, setError] = useState(null);
 
   const fetchFilms = useCallback(async () => {
-    if (!filters) return;
-
     setLoading(true);
     setError(null);
 
     try {
-      // Преобразуем фильтры в параметры для API
-      const params = {
-        genreIds: filters.genres || [],
-        actorIds: [],
-        directorIds: [],
-        countyIds: filters.countryIds || [],
-        distributorIds: [],
-        years: filters.minYear ? [filters.minYear] : [],
-        ageRatingIds: filters.ageRating || [],
-        durationMin: 0,
-        durationMax: filters.maxDuration || 300,
-        sortBy: 'release_date',
-        sortOrder: 'desc',
-        limit: 50,
-        offset: 0,
-        minRating: filters.minRating || 0 // Добавляем фильтр по рейтингу
-      };
+      const params = new URLSearchParams();
+
+      if (filters.genres?.length > 0) {
+        params.append('genreIds', filters.genres.join(','));
+      }
+
+      if (filters.years !== undefined && filters.years !== null) {
+        params.append('years', filters.years);
+      }
+
+      if (filters.durationMax !== undefined) {
+        params.append('durationMax', filters.durationMax);
+      }
+      params.append('durationMin', '0');
+
+      if (filters.minRating !== undefined) {
+        params.append('minRating', filters.minRating);
+      }
+
+      params.append('sortBy', 'release_date');
+      params.append('sortOrder', 'desc');
+      params.append('limit', '50');
+      params.append('offset', '0');
 
       const data = await getFilteredFilms(params);
       setFilms(data);
